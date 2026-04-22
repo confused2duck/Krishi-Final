@@ -10,6 +10,8 @@ import logging
 import bcrypt
 import jwt
 import certifi
+import base64
+import mimetypes
 from pathlib import Path
 from pydantic import BaseModel, Field, EmailStr
 from typing import List, Optional, Dict, Any
@@ -2314,6 +2316,7 @@ async def lifespan(app: FastAPI):
         await db.subscriptions.create_index("user_id")
 
         await seed_admin()
+        await sync_default_logo()
         await seed_products()
         await seed_collections()
         await prune_removed_collections()
@@ -2352,6 +2355,29 @@ async def seed_admin():
             {"$set": {"password_hash": hash_password(admin_password)}}
         )
         logger.info("Admin password updated")
+
+async def sync_default_logo():
+    logo_path = Path(__file__).resolve().parent.parent / "frontend" / "public" / "images" / "branding" / "krishi-logo.png"
+    if not logo_path.exists():
+        logger.warning("Default logo file not found at %s", logo_path)
+        return
+
+    mime_type, _ = mimetypes.guess_type(str(logo_path))
+    encoded = base64.b64encode(logo_path.read_bytes()).decode("ascii")
+    await db.site_images.update_one(
+        {"page": "logo", "name": "krishi-logo.png"},
+        {
+            "$set": {
+                "name": "krishi-logo.png",
+                "data": encoded,
+                "mime_type": mime_type or "image/png",
+                "page": "logo",
+                "section": "primary",
+                "created_at": datetime.now(timezone.utc),
+            }
+        },
+        upsert=True,
+    )
 
 
 async def seed_products():
@@ -3416,6 +3442,7 @@ async def run_seed(token: str):
         await db.orders.create_index("user_id")
         await db.subscriptions.create_index("user_id")
         await seed_admin()
+        await sync_default_logo()
         await seed_products()
         await seed_collections()
         await prune_removed_collections()

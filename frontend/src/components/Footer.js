@@ -6,7 +6,7 @@ import axios from 'axios';
 const API = process.env.REACT_APP_BACKEND_URL || '';
 
 const Footer = () => {
-  const [logoUrl, setLogoUrl] = useState(null);
+  const [logoUrl, setLogoUrl] = useState('/images/branding/krishi-logo.png');
 
   useEffect(() => {
     axios.get(`${API}/api/images?page=logo`)
@@ -38,7 +38,7 @@ const Footer = () => {
           <div className="space-y-4">
             <Link to="/" data-testid="footer-logo-link">
               {logoUrl ? (
-                <img src={logoUrl} alt="Krishi" className="h-12 w-auto" />
+                <img src={logoUrl} alt="Krishi" className="h-12 md:h-14 w-auto" />
               ) : (
                 <h3 className="text-2xl font-bold text-white" style={{ fontFamily: 'Playfair Display, serif' }}>
                   Krishi

@@ -41,7 +41,7 @@ const AdminLayout = ({ children }) => {
         <div className="flex items-center justify-between px-4 py-5 border-b border-white/10">
           {sidebarOpen && (
             <Link to="/" target="_blank" className="flex items-center gap-2 group">
-              <span className="font-bold text-lg text-[#F5EDD6]" style={{ fontFamily: 'Playfair Display, serif' }}>Krishi</span>
+              <img src="/images/branding/krishi-logo.png" alt="Krishi" className="h-10 w-auto" />
               <ExternalLink size={12} className="text-white/40 group-hover:text-white/70" />
             </Link>
           )}

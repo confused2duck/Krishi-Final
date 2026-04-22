@@ -17,7 +17,7 @@ const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [logoUrl, setLogoUrl] = useState(null);
+  const [logoUrl, setLogoUrl] = useState('/images/branding/krishi-logo.png');
   const { user, logout } = useAuth();
   const { cartItemsCount } = useCart();
   const navigate = useNavigate();
