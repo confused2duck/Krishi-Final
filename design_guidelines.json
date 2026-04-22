@@ -1,0 +1,116 @@
+{
+  "theme": "light",
+  "archetype": "1 (Organic & Earthy)",
+  "colors": {
+    "background_base": "#F5EDD6",
+    "background_surface": "#FFFFFF",
+    "background_alt": "#EBE1C5",
+    "primary": "#2D5016",
+    "primary_hover": "#1F3A0F",
+    "accent": "#C8602B",
+    "accent_hover": "#A94E21",
+    "text_main": "#1A2F0D",
+    "text_muted": "#4A5D3F",
+    "border_subtle": "rgba(45, 80, 22, 0.15)",
+    "border_strong": "rgba(45, 80, 22, 0.4)",
+    "success": "#2D5016",
+    "warning": "#C8602B",
+    "error": "#9B2C2C"
+  },
+  "typography": {
+    "headings": {
+      "font_family": "Playfair Display, serif",
+      "h1": "text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-none text-[#2D5016]",
+      "h2": "text-3xl sm:text-4xl tracking-tight text-[#2D5016]",
+      "h3": "text-xl sm:text-2xl text-[#2D5016]",
+      "h4": "text-lg sm:text-xl text-[#2D5016]"
+    },
+    "body": {
+      "font_family": "Inter, sans-serif",
+      "base": "text-base leading-relaxed text-[#1A2F0D]",
+      "small": "text-sm text-[#4A5D3F]",
+      "labels": "text-xs uppercase tracking-[0.2em] font-medium text-[#C8602B]"
+    }
+  },
+  "layout_and_spacing": {
+    "philosophy": "Generous spacing. Allow natural photography to breathe. Avoid generic card constraints when possible.",
+    "container": "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+    "section_padding": "py-16 md:py-24 lg:py-32",
+    "bento_grid": "grid grid-cols-1 md:grid-cols-8 lg:grid-cols-12 gap-6 lg:gap-8",
+    "border_radius": {
+      "buttons": "rounded-full",
+      "cards": "rounded-2xl",
+      "inputs": "rounded-lg"
+    }
+  },
+  "components_strategy": {
+    "header": "Sticky nav, backdrop-blur-xl bg-[#F5EDD6]/90 border-b border-[#2D5016]/10. Must contain Cart icon and WhatsApp icon.",
+    "buttons": {
+      "primary": "bg-[#2D5016] text-[#F5EDD6] hover:bg-[#1F3A0F] rounded-full px-8 py-3 font-medium transition-all duration-300",
+      "secondary": "bg-transparent border-2 border-[#2D5016] text-[#2D5016] hover:bg-[#2D5016] hover:text-[#F5EDD6] rounded-full px-8 py-3 font-medium transition-all",
+      "accent": "bg-[#C8602B] text-white hover:bg-[#A94E21] rounded-full px-8 py-3 font-medium shadow-[0_4px_14px_0_rgba(200,96,43,0.39)] transition-all"
+    },
+    "cards": "bg-[#FFFFFF] rounded-2xl p-6 border border-[#2D5016]/10 shadow-sm hover:shadow-md transition-shadow",
+    "inputs": "bg-[#FFFFFF] border border-[#2D5016]/20 rounded-lg focus:ring-2 focus:ring-[#2D5016]/50 focus:border-[#2D5016] text-[#1A2F0D]",
+    "overlays": "Never use opaque black over organic images. Use bg-gradient-to-t from-[#1A2F0D]/80 to-transparent for text contrast on hero images."
+  },
+  "visual_enhancers": {
+    "motion": "Subtle, organic transitions. Use framer-motion for slow, gentle reveal of sections (fade in up). Image hover should trigger a slow scale-up (scale-105 duration-700 ease-out).",
+    "surfaces": "Mix flat solid cream backgrounds with clean white cards. Use 'Tracing Beam' or subtle glowing borders sparingly for premium features (like 'Subscribe & Save')."
+  },
+  "iconography": {
+    "library": "lucide-react",
+    "style": "Clean, thin stroke (1.5px), color matching primary (#2D5016) or accent (#C8602B)"
+  },
+  "media": {
+    "image_urls": {
+      "hero_pouring": {
+        "url": "https://images.unsplash.com/photo-1758522965224-7a69eedbad8a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2MTJ8MHwxfHNlYXJjaHwxfHxjb2xkJTIwcHJlc3NlZCUyMG9pbCUyMHBvdXJpbmd8ZW58MHx8fHwxNzc1NjI0NzEyfDA&ixlib=rb-4.1.0&q=85",
+        "description": "Golden oil pouring, used for primary hero banner"
+      },
+      "oil_close_up": {
+         "url": "https://images.unsplash.com/photo-1709293287084-544575bb1398?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2MTJ8MHwxfHNlYXJjaHwyfHxjb2xkJTIwcHJlc3NlZCUyMG9pbCUyMHBvdXJpbmd8ZW58MHx8fHwxNzc1NjI0NzEyfDA&ixlib=rb-4.1.0&q=85",
+         "description": "Close up of liquid, good for product features"
+      },
+      "farmer_story": {
+        "url": "https://images.unsplash.com/photo-1707721690746-cdbdabadebc2?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA4Mzl8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBmYXJtZXIlMjBhZ3JpY3VsdHVyZXxlbnwwfHx8fDE3NzU2MjQ3MTN8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Indian farmer in field, used for About Us or Farmer Story section"
+      },
+      "farmer_group": {
+        "url": "https://images.unsplash.com/photo-1707721690626-10e5f0366bcb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA4Mzl8MHwxfHNlYXJjaHwyfHxpbmRpYW4lMjBmYXJtZXIlMjBhZ3JpY3VsdHVyZXxlbnwwfHx8fDE3NzU2MjQ3MTN8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Group of farmers, used for community/sourcing transparency"
+      },
+      "grains_display": {
+        "url": "https://images.unsplash.com/photo-1676619357571-b4f086f81299?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NDh8MHwxfHNlYXJjaHwyfHx0cmFkaXRpb25hbCUyMGluZGlhbiUyMGdyYWlucyUyMG1pbGxldHN8ZW58MHx8fHwxNzc1NjI0NzI2fDA&ixlib=rb-4.1.0&q=85",
+        "description": "Baskets filled with grains, ideal for Collections or Grains category"
+      },
+      "spices_display": {
+        "url": "https://images.unsplash.com/photo-1509358740172-f77c168f6312?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NjZ8MHwxfHNlYXJjaHwxfHxvcmdhbmljJTIwc3BpY2VzJTIwaW5kaWFufGVufDB8fHx8MTc3NTYyNDcyNnww&ixlib=rb-4.1.0&q=85",
+        "description": "Spoon of spices, ideal for Spices category"
+      },
+      "product_placeholder_1": {
+        "url": "https://images.unsplash.com/photo-1708521203160-2a1e7c8f774a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NDh8MHwxfHNlYXJjaHwxfHx0cmFkaXRpb25hbCUyMGluZGlhbiUyMGdyYWlucyUyMG1pbGxldHN8ZW58MHx8fHwxNzc1NjI0NzI2fDA&ixlib=rb-4.1.0&q=85",
+        "description": "Metal bowl with seeds, product image placeholder"
+      },
+      "product_placeholder_2": {
+        "url": "https://images.unsplash.com/photo-1656422046523-469409b2b4d0?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NjZ8MHwxfHNlYXJjaHwyfHxvcmdhbmljJTIwc3BpY2VzJTIwaW5kaWFufGVufDB8fHx8MTc3NTYyNDcyNnww&ixlib=rb-4.1.0&q=85",
+        "description": "Plate of food, product image placeholder"
+      }
+    },
+    "guidelines": "Do not stretch images. Use object-cover for all image containers. Wrap all images in div containers with hidden overflow."
+  },
+  "testing": {
+    "attributes": "All interactive and key informational elements MUST include a data-testid attribute in kebab-case format indicating role (e.g., data-testid='add-to-cart-button', data-testid='hero-cta-button')."
+  },
+  "instructions_to_main_agent": [
+    "Use Playfair Display for all headers and Inter for all body text.",
+    "Ensure the hero section overlay is a gradient to transparent, not a flat opaque black blanket, preserving the organic imagery.",
+    "Implement the bundle builder as a step-by-step wizard using Shadcn components customized with brand colors.",
+    "Use generous padding (py-16 to py-24) to create a relaxed, earthy feel.",
+    "Apply 'data-testid' to every form input, button, and dynamic link.",
+    "Do not use default Shadcn border radius everywhere; respect the rounded-2xl for cards and rounded-full for buttons as defined.",
+    "Avoid generic sans fonts for headers; Playfair Display is mandatory.",
+    "Use Lucide icons sparingly and match them to primary or accent color.",
+    "Ensure mobile responsiveness is prioritized, specially for the sticky Add To Cart on Product Pages."
+  ]
+}

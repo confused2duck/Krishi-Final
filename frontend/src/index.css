@@ -1,0 +1,226 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --krishi-green: #2D5016;
+  --krishi-green-hover: #1F3A0F;
+  --krishi-cream: #F5EDD6;
+  --krishi-cream-alt: #EBE1C5;
+  --krishi-terracotta: #C8602B;
+  --krishi-terracotta-hover: #A94E21;
+  --krishi-text-main: #1A2F0D;
+  --krishi-text-muted: #4A5D3F;
+  --krishi-border: rgba(45, 80, 22, 0.15);
+  --krishi-border-strong: rgba(45, 80, 22, 0.4);
+}
+
+@layer base {
+  :root {
+    --background: 45 43% 90%;
+    --foreground: 90 50% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 90 50% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 90 50% 12%;
+    --primary: 90 53% 20%;
+    --primary-foreground: 45 43% 90%;
+    --secondary: 45 35% 85%;
+    --secondary-foreground: 90 50% 12%;
+    --muted: 45 35% 85%;
+    --muted-foreground: 90 20% 35%;
+    --accent: 20 65% 47%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 60% 40%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 90 30% 80%;
+    --input: 90 30% 80%;
+    --ring: 90 53% 20%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-[#F5EDD6] text-[#1A2F0D] antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+    @apply text-[#2D5016];
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-[#2D5016] text-[#F5EDD6] hover:bg-[#1F3A0F] rounded-full px-8 py-3 font-medium transition-all duration-300 inline-flex items-center justify-center;
+  }
+  
+  .btn-secondary {
+    @apply bg-transparent border-2 border-[#2D5016] text-[#2D5016] hover:bg-[#2D5016] hover:text-[#F5EDD6] rounded-full px-8 py-3 font-medium transition-all duration-300 inline-flex items-center justify-center;
+  }
+  
+  .btn-accent {
+    @apply bg-[#C8602B] text-white hover:bg-[#A94E21] rounded-full px-8 py-3 font-medium shadow-[0_4px_14px_0_rgba(200,96,43,0.39)] transition-all duration-300 inline-flex items-center justify-center;
+  }
+  
+  .card-krishi {
+    @apply bg-white rounded-2xl p-6 border border-[#2D5016]/10 shadow-sm hover:shadow-md transition-shadow;
+  }
+  
+  .input-krishi {
+    @apply bg-white border border-[#2D5016]/20 rounded-lg focus:ring-2 focus:ring-[#2D5016]/50 focus:border-[#2D5016] text-[#1A2F0D] px-4 py-3;
+  }
+  
+  .container-krishi {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .section-padding {
+    @apply py-12 md:py-20 lg:py-28;
+  }
+  
+  /* Mobile-first improvements */
+  @media (max-width: 640px) {
+    .heading-h1 {
+      @apply text-3xl;
+    }
+    
+    .heading-h2 {
+      @apply text-2xl;
+    }
+    
+    .btn-primary, .btn-secondary, .btn-accent {
+      @apply px-6 py-2.5 text-sm;
+    }
+  }
+  
+  .heading-h1 {
+    @apply text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-none text-[#2D5016] font-bold;
+    font-family: 'Playfair Display', serif;
+  }
+  
+  .heading-h2 {
+    @apply text-3xl sm:text-4xl tracking-tight text-[#2D5016] font-semibold;
+    font-family: 'Playfair Display', serif;
+  }
+  
+  .heading-h3 {
+    @apply text-xl sm:text-2xl text-[#2D5016] font-semibold;
+    font-family: 'Playfair Display', serif;
+  }
+  
+  .label-accent {
+    @apply text-xs uppercase tracking-[0.2em] font-medium text-[#C8602B];
+  }
+  
+  .text-muted-krishi {
+    @apply text-[#4A5D3F];
+  }
+  
+  .gradient-overlay {
+    @apply bg-gradient-to-t from-[#1A2F0D]/80 to-transparent;
+  }
+  
+  .sticky-header {
+    @apply sticky top-0 z-50 backdrop-blur-xl bg-[#F5EDD6]/90 border-b border-[#2D5016]/10;
+  }
+  
+  .product-card {
+    @apply bg-white rounded-2xl overflow-hidden border border-[#2D5016]/10 hover:shadow-lg transition-all duration-300;
+  }
+  
+  .product-card-image {
+    @apply w-full h-48 object-cover transition-transform duration-700 ease-out;
+  }
+  
+  .product-card:hover .product-card-image {
+    @apply scale-105;
+  }
+  
+  .whatsapp-btn {
+    @apply fixed bottom-6 right-6 z-50 bg-[#25D366] text-white p-4 rounded-full shadow-lg hover:bg-[#20ba5a] transition-all duration-300 hover:scale-110;
+  }
+  
+  .progress-bar {
+    @apply h-2 bg-[#EBE1C5] rounded-full overflow-hidden;
+  }
+  
+  .progress-bar-fill {
+    @apply h-full bg-[#2D5016] transition-all duration-500 ease-out rounded-full;
+  }
+}
+
+/* Custom animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.6s ease-out forwards;
+}
+
+.animation-delay-100 { animation-delay: 100ms; }
+.animation-delay-200 { animation-delay: 200ms; }
+.animation-delay-300 { animation-delay: 300ms; }
+.animation-delay-400 { animation-delay: 400ms; }
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #EBE1C5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2D5016;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #1F3A0F;
+}
+
+/* Toast styling override */
+[data-sonner-toaster] {
+  --normal-bg: #2D5016;
+  --normal-text: #F5EDD6;
+  --success-bg: #2D5016;
+  --success-text: #F5EDD6;
+}
