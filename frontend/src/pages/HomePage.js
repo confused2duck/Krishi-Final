@@ -11,16 +11,16 @@ const API = process.env.REACT_APP_BACKEND_URL || "";
 
 const heroSlides = [
   {
-    image: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=1920',
-    alt: 'Traditional Kal Chekku stone press oil extraction',
+    image: '/images/hero/1.png',
+    alt: 'Krishi hero slide showing Kallu Ghana introduction',
   },
   {
-    image: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=1920',
-    alt: 'Bull-driven wooden ghani oil press',
+    image: '/images/hero/2.png',
+    alt: 'Krishi hero slide showing wooden-pressed oils from Indian farms',
   },
   {
-    image: 'https://images.unsplash.com/photo-1589923188900-85dae523342b?w=1920',
-    alt: 'Pure cold-pressed oils from Indian farms',
+    image: '/images/hero/3.png',
+    alt: 'Krishi hero slide showing pure goodness with no heat or chemicals',
   },
 ];
 
