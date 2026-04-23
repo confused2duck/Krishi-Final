@@ -12,7 +12,7 @@ const API = process.env.REACT_APP_BACKEND_URL || "";
 
 const heroSlides = [
   {
-    image: '/images/hero/oil-hero-banner-final.png',
+    image: '/images/hero/oil-hero-banner-final-v2.png',
     alt: 'Krishi homepage hero banner',
   },
 ];
@@ -171,17 +171,33 @@ const HomePage = () => {
     />
     <div className="bg-[#F5EDD6]" data-testid="homepage">
       {/* Hero Section */}
-      <section className="bg-[#F5EDD6] pt-4 md:pt-6" data-testid="hero-section">
-        <div className="container-krishi">
-          <div className="overflow-hidden rounded-[1.75rem] bg-[#FBF7EF] shadow-[0_20px_70px_rgba(55,43,25,0.08)]">
-            <img
-              src={heroSlides[0].image}
-              alt={heroSlides[0].alt}
-              className="w-full h-auto object-contain"
-              loading="eager"
-              width="1920"
-              height="1080"
-            />
+      <section className="bg-[#F5EDD6] pt-2 md:pt-4" data-testid="hero-section">
+        <div className="relative w-full overflow-hidden bg-[#F5EDD6]">
+          <img
+            src={heroSlides[0].image}
+            alt={heroSlides[0].alt}
+            className="w-full h-auto object-cover"
+            loading="eager"
+            width="1920"
+            height="1080"
+          />
+
+          <div className="absolute inset-x-0 bottom-0 px-4 pb-4 md:px-8 md:pb-8">
+            <div className="mx-auto max-w-[860px] rounded-2xl bg-[#F5EBDD]/90 px-4 py-3 shadow-[0_14px_40px_rgba(55,43,25,0.14)] backdrop-blur-sm md:px-6 md:py-4">
+              <div className="flex flex-col items-center gap-3 md:flex-row md:justify-between md:gap-6">
+                <p className="text-center text-base font-semibold text-[#8E8176] md:text-left md:text-[1.9rem] md:leading-none">
+                  {FREE_SHIPPING_MESSAGE}
+                </p>
+                <div className="flex flex-wrap justify-center gap-3 md:flex-nowrap">
+                  <Link to="/collections/cold-pressed-oils" className="btn-accent whitespace-nowrap" data-testid="hero-shop-now">
+                    Shop Now
+                  </Link>
+                  <Link to="/pages/oil" className="btn-secondary border-[#8E8176] bg-white/75 text-[#8E8176] hover:bg-[#8E8176] hover:text-white whitespace-nowrap" data-testid="hero-learn-more">
+                    Learn More
+                  </Link>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
