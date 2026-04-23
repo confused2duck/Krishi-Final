@@ -26,6 +26,7 @@ const ProductDetailPage = () => {
   const [pincodeResult, setPincodeResult] = useState(null);
   const [mainImage, setMainImage] = useState(0);
   const [stickyBarVisible, setStickyBarVisible] = useState(false);
+  const fallbackImage = 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=800';
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -37,11 +38,18 @@ const ProductDetailPage = () => {
         ]);
         setProduct(productRes.data);
         setRelatedProducts(relatedRes.data);
+        setMainImage(0);
+        setPincodeResult(null);
         if (productRes.data.sizes?.length > 0) {
           setSelectedSize(productRes.data.sizes[0]);
+        } else {
+          setSelectedSize(null);
         }
       } catch (error) {
         console.error('Failed to fetch product:', error);
+        setProduct(null);
+        setRelatedProducts([]);
+        setSelectedSize(null);
       } finally {
         setLoading(false);
       }
@@ -104,8 +112,6 @@ const ProductDetailPage = () => {
     return Math.round(price);
   };
 
-  const oilOfferApplies = product.collection === OIL_COLLECTION_SLUG && isFiveLitreSize(selectedSize?.name);
-
   if (loading) {
     return (
       <div className="bg-[#F5EDD6] min-h-screen py-12">
@@ -134,6 +140,10 @@ const ProductDetailPage = () => {
     );
   }
 
+  const productImages = Array.isArray(product.images) && product.images.length > 0 ? product.images : [fallbackImage];
+  const activeImage = resolveMediaUrl(productImages[Math.min(mainImage, productImages.length - 1)], API) || fallbackImage;
+  const oilOfferApplies = product.collection === OIL_COLLECTION_SLUG && isFiveLitreSize(selectedSize?.name);
+
   const comparisonData = [
     { label: 'Extraction', coldPressed: 'Traditional wooden press', refined: 'Chemical solvents & high heat' },
     { label: 'Nutrients', coldPressed: '100% preserved', refined: 'Mostly destroyed' },
@@ -146,7 +156,7 @@ const ProductDetailPage = () => {
     "@type": "Product",
     "name": product.name,
     "description": product.description,
-    "image": product.images?.length ? product.images : ["https://www.krishifoods.in/og-image.jpg"],
+    "image": productImages,
     "sku": product.slug,
     "brand": { "@type": "Brand", "name": "Krishi Foods" },
     "offers": {
@@ -203,16 +213,16 @@ const ProductDetailPage = () => {
           <div className="space-y-4">
             <div className="aspect-square rounded-2xl overflow-hidden bg-white" data-testid="main-image">
               <img
-                src={resolveMediaUrl(product.images?.[mainImage], API) || 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=800'}
+                src={activeImage}
                 alt={product.name}
                 className={`w-full h-full hover:scale-105 transition-transform duration-700 cursor-zoom-in ${product.collection === OIL_COLLECTION_SLUG ? 'object-contain p-4 bg-white' : 'object-cover'}`}
                 width="800"
                 height="800"
               />
             </div>
-            {product.images?.length > 1 && (
+            {productImages.length > 1 && (
               <div className="flex gap-3">
-                {product.images.map((img, idx) => (
+                {productImages.map((img, idx) => (
                   <button
                     key={idx}
                     onClick={() => setMainImage(idx)}
@@ -485,7 +495,7 @@ const ProductDetailPage = () => {
                     <img 
                       src={resolveMediaUrl(prod.images?.[0], API) || 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500'} 
                       alt={prod.name}
-                      className="product-card-image"
+                      className={prod.collection === OIL_COLLECTION_SLUG ? 'w-full h-full object-contain bg-white p-4' : 'product-card-image'}
                     />
                   </div>
                   <div className="p-4">

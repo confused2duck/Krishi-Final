@@ -9,6 +9,7 @@ import { Toaster } from "./components/ui/sonner";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import WhatsAppButton from "./components/WhatsAppButton";
+import RouteErrorBoundary from "./components/RouteErrorBoundary";
 
 // Pages
 import HomePage from "./pages/HomePage";
@@ -76,7 +77,9 @@ const AnalyticsScripts = () => {
 const MainLayout = ({ children }) => (
   <>
     <Header />
-    <main>{children}</main>
+    <main>
+      <RouteErrorBoundary>{children}</RouteErrorBoundary>
+    </main>
     <Footer />
     <WhatsAppButton />
   </>

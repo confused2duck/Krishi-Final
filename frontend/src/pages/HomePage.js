@@ -5,7 +5,7 @@ import { ArrowRight, Truck, Leaf, Users, Shield, ChevronLeft, ChevronRight, Play
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '../components/ui/carousel';
 import { Switch } from '../components/ui/switch';
 import SEO from '../components/SEO';
-import { resolveMediaUrl } from '../lib/utils';
+import { FREE_SHIPPING_MESSAGE, resolveMediaUrl } from '../lib/utils';
 import { usePageImages, usePageVideos } from '../hooks/usePageMedia';
 
 const API = process.env.REACT_APP_BACKEND_URL || "";
@@ -189,58 +189,62 @@ const HomePage = () => {
     <div className="bg-[#F5EDD6]" data-testid="homepage">
       {/* Hero Section - 3-image auto-rotating banner */}
       <section className="relative min-h-[70vh] md:min-h-[80vh] flex items-center overflow-hidden" data-testid="hero-section">
-        {/* Slides */}
-        {activeSlides.map((slide, i) => (
-          <div
-            key={i}
-            className="absolute inset-0 transition-opacity duration-1000"
-            style={{ opacity: heroIndex === i ? 1 : 0 }}
-          >
-            <img
-              src={slide.image}
-              alt={slide.alt}
-              className="w-full h-full object-cover"
-              loading={i === 0 ? 'eager' : 'lazy'}
-              width="1920"
-              height="1080"
-            />
-          </div>
-        ))}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#FBF7EF]/92 via-[#FBF7EF]/70 to-[#FBF7EF]/12 md:to-transparent"></div>
-
-        {/* Slide dots */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-          {activeSlides.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setHeroIndex(i)}
-              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${heroIndex === i ? 'bg-[#C8602B] w-6' : 'bg-white/50'}`}
-              aria-label={`Go to slide ${i + 1}`}
-            />
-          ))}
-        </div>
-
-        {/* Content */}
-        <div className="container-krishi relative z-10 py-12 md:py-20">
-          <div className="max-w-2xl">
-            <div className="inline-block max-w-xl rounded-[2rem] bg-white/68 px-6 py-7 shadow-[0_18px_60px_rgba(55,43,25,0.12)] backdrop-blur-sm md:px-8 md:py-9">
-              <span className="label-accent animate-fade-in-up">Traditional Extraction</span>
-              <h1 className="mt-4 mb-4 text-4xl font-bold leading-tight text-[#3A2A19] md:mb-6 md:text-6xl" style={{ fontFamily: 'Playfair Display, serif' }}>
-                {heroTitleLines.map((line, idx) => (
-                  <React.Fragment key={idx}>{line}{idx < heroTitleLines.length - 1 ? <br /> : null}</React.Fragment>
-                ))}
-              </h1>
-              <p className="text-base md:text-lg text-[#5F5144] mb-6 md:mb-8 animate-fade-in-up animation-delay-200">
-                Traditional cold-pressed oils crafted slowly for clean flavor, natural aroma, and everyday cooking.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 md:gap-4 animate-fade-in-up animation-delay-300">
-                <Link to="/collections/cold-pressed-oils" className="btn-accent" data-testid="hero-shop-now">
-                  Shop Now <ArrowRight className="ml-2" size={18} />
-                </Link>
-                <Link to="/pages/oil" className="btn-secondary border-[#3A2A19] text-[#3A2A19] hover:bg-[#3A2A19] hover:text-white" data-testid="hero-build-combo">
-                  Learn More
-                </Link>
+        <div className="container-krishi relative z-10 py-10 md:py-16">
+          <div className="grid items-center gap-8 md:grid-cols-10 md:gap-10">
+            <div className="order-1 md:col-span-3">
+              <div className="rounded-[2rem] bg-[#FBF7EF] px-6 py-7 shadow-[0_18px_60px_rgba(55,43,25,0.08)] md:px-8 md:py-10">
+                <span className="label-accent">Traditional Extraction</span>
+                <h1 className="mt-4 mb-4 text-4xl font-bold leading-tight text-[#3A2A19] md:mb-6 md:text-5xl xl:text-6xl" style={{ fontFamily: 'Playfair Display, serif' }}>
+                  {heroTitleLines.map((line, idx) => (
+                    <React.Fragment key={idx}>{line}{idx < heroTitleLines.length - 1 ? <br /> : null}</React.Fragment>
+                  ))}
+                </h1>
+                <p className="mb-6 text-base text-[#5F5144] md:mb-8 md:text-lg">
+                  Traditional cold-pressed oils crafted slowly for clean flavor, natural aroma, and everyday cooking.
+                </p>
+                <p className="mb-6 text-sm text-[#6A5C4F]">{FREE_SHIPPING_MESSAGE}</p>
+                <div className="flex flex-col gap-3">
+                  <Link to="/collections/cold-pressed-oils" className="btn-accent text-center" data-testid="hero-shop-now">
+                    Shop Now <ArrowRight className="ml-2 inline" size={18} />
+                  </Link>
+                  <Link to="/pages/oil" className="btn-secondary border-[#3A2A19] text-[#3A2A19] hover:bg-[#3A2A19] hover:text-white text-center" data-testid="hero-build-combo">
+                    Learn More
+                  </Link>
+                </div>
               </div>
+            </div>
+
+            <div className="order-2 md:col-span-7">
+              <div className="overflow-hidden rounded-[2rem] bg-[#F8F2E8] shadow-[0_20px_70px_rgba(55,43,25,0.08)]">
+                {activeSlides.map((slide, i) => (
+                  <div
+                    key={i}
+                    className="transition-opacity duration-1000"
+                    style={{ display: heroIndex === i ? 'block' : 'none' }}
+                  >
+                    <img
+                      src={slide.image}
+                      alt={slide.alt}
+                      className="h-full w-full object-contain"
+                      loading={i === 0 ? 'eager' : 'lazy'}
+                      width="1920"
+                      height="1080"
+                    />
+                  </div>
+                ))}
+              </div>
+              {activeSlides.length > 1 && (
+                <div className="mt-4 flex justify-center gap-2">
+                  {activeSlides.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setHeroIndex(i)}
+                      className={`h-2.5 rounded-full transition-all duration-300 ${heroIndex === i ? 'w-6 bg-[#C8602B]' : 'w-2.5 bg-[#D4C4AE]'}`}
+                      aria-label={`Go to slide ${i + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
