@@ -12,7 +12,7 @@ const API = process.env.REACT_APP_BACKEND_URL || "";
 
 const heroSlides = [
   {
-    image: '/images/hero/oil-hero-banner-final-v2.png',
+    image: '/images/hero/oil-hero-banner-final-v3.png',
     alt: 'Krishi homepage hero banner',
   },
 ];
@@ -171,7 +171,7 @@ const HomePage = () => {
     />
     <div className="bg-[#F5EDD6]" data-testid="homepage">
       {/* Hero Section */}
-      <section className="bg-[#F5EDD6] pt-2 md:pt-4" data-testid="hero-section">
+      <section className="bg-[#F5EDD6]" data-testid="hero-section">
         <div className="relative w-full overflow-hidden bg-[#F5EDD6]">
           <img
             src={heroSlides[0].image}
@@ -182,20 +182,26 @@ const HomePage = () => {
             height="1080"
           />
 
-          <div className="absolute inset-x-0 bottom-0 px-4 pb-4 md:px-8 md:pb-8">
-            <div className="mx-auto max-w-[860px] rounded-2xl bg-[#F5EBDD]/90 px-4 py-3 shadow-[0_14px_40px_rgba(55,43,25,0.14)] backdrop-blur-sm md:px-6 md:py-4">
-              <div className="flex flex-col items-center gap-3 md:flex-row md:justify-between md:gap-6">
-                <p className="text-center text-base font-semibold text-[#8E8176] md:text-left md:text-[1.9rem] md:leading-none">
-                  {FREE_SHIPPING_MESSAGE}
-                </p>
-                <div className="flex flex-wrap justify-center gap-3 md:flex-nowrap">
-                  <Link to="/collections/cold-pressed-oils" className="btn-accent whitespace-nowrap" data-testid="hero-shop-now">
-                    Shop Now
-                  </Link>
-                  <Link to="/pages/oil" className="btn-secondary border-[#8E8176] bg-white/75 text-[#8E8176] hover:bg-[#8E8176] hover:text-white whitespace-nowrap" data-testid="hero-learn-more">
-                    Learn More
-                  </Link>
-                </div>
+          <div className="absolute bottom-[5.5%] left-1/2 w-[58%] -translate-x-[2%] px-3 sm:px-4 md:bottom-[6%] md:left-[54%] md:w-[46%] md:-translate-x-0 md:px-0">
+            <div className="flex flex-col items-center gap-3 md:items-start">
+              <p className="max-w-[560px] text-center text-[0.95rem] font-semibold leading-tight text-[#9A8C81] sm:text-[1.05rem] md:text-left md:text-[1.55rem]">
+                {FREE_SHIPPING_MESSAGE}
+              </p>
+              <div className="flex flex-wrap justify-center gap-2.5 md:justify-start">
+                <Link
+                  to="/collections/cold-pressed-oils"
+                  className="inline-flex min-w-[118px] items-center justify-center rounded-full bg-[#C9682A] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_10px_20px_rgba(201,104,42,0.22)] transition-colors hover:bg-[#b95c23]"
+                  data-testid="hero-shop-now"
+                >
+                  Shop Now
+                </Link>
+                <Link
+                  to="/pages/oil"
+                  className="inline-flex min-w-[118px] items-center justify-center rounded-full border border-[#A59688] bg-white/82 px-5 py-2.5 text-sm font-semibold text-[#8E8176] transition-colors hover:bg-[#8E8176] hover:text-white"
+                  data-testid="hero-learn-more"
+                >
+                  Learn More
+                </Link>
               </div>
             </div>
           </div>
