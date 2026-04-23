@@ -7,6 +7,7 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'sonner';
 import SEO from '../components/SEO';
+import { resolveMediaUrl } from '../lib/utils';
 
 const API = process.env.REACT_APP_BACKEND_URL || "";
 
@@ -299,7 +300,7 @@ const CartPage = () => {
               <div key={`${item.product_id}-${item.size}`} className="card-krishi flex gap-4" data-testid={`cart-item-${index}`}>
                 <div className="w-24 h-24 md:w-32 md:h-32 rounded-lg overflow-hidden flex-shrink-0">
                   <img 
-                    src={item.image || 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=200'} 
+                    src={resolveMediaUrl(item.image, API) || 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=200'}
                     alt={item.name}
                     className="w-full h-full object-cover"
                   />
@@ -442,7 +443,7 @@ const CartPage = () => {
                 <Link key={product.slug} to={`/products/${product.slug}`} className="product-card">
                   <div className="aspect-square overflow-hidden">
                     <img 
-                      src={product.images?.[0] || 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500'} 
+                      src={resolveMediaUrl(product.images?.[0], API) || 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500'} 
                       alt={product.name}
                       className="product-card-image"
                     />

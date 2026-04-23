@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'sonner';
 import SEO from '../components/SEO';
+import { resolveMediaUrl } from '../lib/utils';
 
 const API = process.env.REACT_APP_BACKEND_URL || "";
 
@@ -189,7 +190,7 @@ const AccountPage = () => {
                           {order.items?.map((item, itemIdx) => (
                             <div key={itemIdx} className="flex items-center gap-2 bg-[#EBE1C5]/50 rounded-lg p-2">
                               <img 
-                                src={item.image || 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=100'} 
+                              src={resolveMediaUrl(item.image, API) || 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=100'}
                                 alt={item.name}
                                 className="w-10 h-10 rounded object-cover"
                               />
@@ -257,7 +258,7 @@ const AccountPage = () => {
                           {sub.items?.map((item, itemIdx) => (
                             <div key={itemIdx} className="flex items-center gap-2 bg-[#EBE1C5]/50 rounded-lg p-2">
                               <img 
-                                src={item.image || 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=100'} 
+                              src={resolveMediaUrl(item.image, API) || 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=100'}
                                 alt={item.name}
                                 className="w-10 h-10 rounded object-cover"
                               />

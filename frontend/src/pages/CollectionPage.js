@@ -8,6 +8,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '../c
 import { useCart } from '../context/CartContext';
 import { toast } from 'sonner';
 import SEO from '../components/SEO';
+import { resolveMediaUrl } from '../lib/utils';
 
 const API = process.env.REACT_APP_BACKEND_URL || "";
 const HIDDEN_COLLECTION_SLUGS = new Set(['unpolished-pulses', 'shikakai', 'wheat', 'frontpage']);
@@ -73,7 +74,7 @@ const CollectionPage = () => {
         size: product.sizes?.[0]?.name || null,
         price: product.price,
         name: product.name,
-        image: product.images?.[0] || ''
+        image: resolveMediaUrl(product.images?.[0], API)
       });
       toast.success(`${product.name} added to cart!`);
     } catch (error) {
@@ -273,7 +274,7 @@ const CollectionPage = () => {
                   >
                     <div className="relative aspect-square overflow-hidden">
                       <img
-                        src={product.images?.[0] || 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500'}
+                        src={resolveMediaUrl(product.images?.[0], API) || 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500'}
                         alt={product.name}
                         className="product-card-image"
                         loading="lazy"

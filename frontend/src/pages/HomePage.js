@@ -5,6 +5,7 @@ import { ArrowRight, Truck, Leaf, Users, Shield, ChevronLeft, ChevronRight, Play
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '../components/ui/carousel';
 import { Switch } from '../components/ui/switch';
 import SEO from '../components/SEO';
+import { resolveMediaUrl } from '../lib/utils';
 import { usePageImages, usePageVideos } from '../hooks/usePageMedia';
 
 const API = process.env.REACT_APP_BACKEND_URL || "";
@@ -321,7 +322,7 @@ const HomePage = () => {
                   <Link to={`/products/${product.slug}`} className="product-card block" data-testid={`bestseller-${product.slug}`}>
                     <div className="aspect-square overflow-hidden">
                       <img
-                        src={product.images?.[0] || 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500'}
+                        src={resolveMediaUrl(product.images?.[0], API) || 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500'}
                         alt={product.name}
                         className="product-card-image"
                         loading="lazy"

@@ -9,6 +9,7 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'sonner';
 import SEO from '../components/SEO';
+import { resolveMediaUrl } from '../lib/utils';
 
 const API = process.env.REACT_APP_BACKEND_URL || "";
 
@@ -77,7 +78,7 @@ const ProductDetailPage = () => {
         frequency: isSubscription ? subscriptionFrequency : null,
         price: calculatePrice(),
         name: product.name,
-        image: product.images?.[0] || ''
+        image: resolveMediaUrl(product.images?.[0], API)
       });
       toast.success(`${product.name} added to cart!`);
     } catch (error) {
@@ -214,7 +215,7 @@ const ProductDetailPage = () => {
           <div className="space-y-4">
             <div className="aspect-square rounded-2xl overflow-hidden bg-white" data-testid="main-image">
               <img
-                src={product.images?.[mainImage] || 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=800'}
+                src={resolveMediaUrl(product.images?.[mainImage], API) || 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=800'}
                 alt={product.name}
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-700 cursor-zoom-in"
                 width="800"
@@ -231,7 +232,7 @@ const ProductDetailPage = () => {
                       mainImage === idx ? 'border-[#2D5016]' : 'border-transparent'
                     }`}
                   >
-                    <img src={img} alt="" className="w-full h-full object-cover" />
+                    <img src={resolveMediaUrl(img, API)} alt="" className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>
@@ -527,7 +528,7 @@ const ProductDetailPage = () => {
                 <Link key={prod.slug} to={`/products/${prod.slug}`} className="product-card">
                   <div className="aspect-square overflow-hidden">
                     <img 
-                      src={prod.images?.[0] || 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500'} 
+                      src={resolveMediaUrl(prod.images?.[0], API) || 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500'} 
                       alt={prod.name}
                       className="product-card-image"
                     />
