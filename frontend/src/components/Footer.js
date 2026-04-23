@@ -1,18 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Phone, Mail, MapPin, Instagram, Facebook, Youtube } from 'lucide-react';
-import axios from 'axios';
-
-const API = process.env.REACT_APP_BACKEND_URL || '';
 
 const Footer = () => {
-  const [logoUrl, setLogoUrl] = useState('/images/branding/krishi-logo.png');
-
-  useEffect(() => {
-    axios.get(`${API}/api/images?page=logo`)
-      .then(r => { if (r.data.length > 0) setLogoUrl(`${API}/api/images/${r.data[0].id}`); })
-      .catch(() => {});
-  }, []);
+  const logoUrl = '/images/branding/krishi-logo.png';
   const collections = [
     { name: 'Cold Pressed Oils', slug: 'cold-pressed-oils' },
     { name: 'Traditional Rices', slug: 'traditional-rices' },

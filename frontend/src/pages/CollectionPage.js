@@ -8,7 +8,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '../c
 import { useCart } from '../context/CartContext';
 import { toast } from 'sonner';
 import SEO from '../components/SEO';
-import { resolveMediaUrl } from '../lib/utils';
+import { FREE_SHIPPING_MESSAGE, FREE_SHIPPING_THRESHOLD, OIL_COLLECTION_SLUG, resolveMediaUrl } from '../lib/utils';
 
 const API = process.env.REACT_APP_BACKEND_URL || "";
 const HIDDEN_COLLECTION_SLUGS = new Set(['unpolished-pulses', 'shikakai', 'wheat', 'frontpage']);
@@ -85,7 +85,7 @@ const CollectionPage = () => {
   const FreeShippingBar = () => {
     const { cart } = useCart();
     const cartTotal = cart.subtotal || 0;
-    const threshold = 999;
+    const threshold = FREE_SHIPPING_THRESHOLD;
     const progress = Math.min((cartTotal / threshold) * 100, 100);
     const remaining = Math.max(threshold - cartTotal, 0);
 
@@ -93,13 +93,14 @@ const CollectionPage = () => {
       <div className="bg-[#2D5016] text-[#F5EDD6] py-3 px-4 rounded-xl mb-6" data-testid="free-shipping-bar">
         <div className="flex items-center justify-between mb-2 text-sm">
           <span>
-            {remaining > 0 ? `Add Rs${remaining} more for FREE shipping!` : "Free shipping unlocked!"}
+            {remaining > 0 ? `Add ₹${remaining} more to unlock free shipping within 10 km.` : "Free shipping unlocked within 10 km."}
           </span>
-          <span className="font-medium">Rs{cartTotal}/Rs{threshold}</span>
+          <span className="font-medium">₹{cartTotal}/₹{threshold}</span>
         </div>
         <div className="progress-bar">
           <div className="progress-bar-fill bg-[#C8602B]" style={{ width: `${progress}%` }}></div>
         </div>
+        <p className="mt-2 text-xs text-[#F5EDD6]/80">{FREE_SHIPPING_MESSAGE}</p>
       </div>
     );
   };
@@ -168,7 +169,7 @@ const CollectionPage = () => {
   );
 
   const collectionTitle = collection?.name || 'All Products';
-  const collectionDesc = collection?.description || `Shop all Krishi Foods products - pure cold-pressed oils, traditional grains, spices and more. Free shipping above Rs999.`;
+  const collectionDesc = collection?.description || `Shop all Krishi Foods products - pure cold-pressed oils, traditional grains, spices and more. ${FREE_SHIPPING_MESSAGE}.`;
   const collectionSlug = slug || 'all';
   const collectionImage = resolveMediaUrl(collection?.image, API);
 
@@ -192,7 +193,7 @@ const CollectionPage = () => {
     <>
     <SEO
       title={`${collectionTitle} - Buy Online`}
-      description={`Shop ${collectionTitle} from Krishi Foods. ${collectionDesc.slice(0, 110)} Free shipping above Rs999.`}
+      description={`Shop ${collectionTitle} from Krishi Foods. ${collectionDesc.slice(0, 140)}`}
       canonical={`/collections/${collectionSlug}`}
       schema={collectionSchema}
     />
@@ -287,7 +288,7 @@ const CollectionPage = () => {
                       <img
                         src={resolveMediaUrl(product.images?.[0], API) || 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500'}
                         alt={product.name}
-                        className="product-card-image"
+                        className={slug === OIL_COLLECTION_SLUG ? 'w-full h-full object-contain bg-white p-4' : 'product-card-image'}
                         loading="lazy"
                         width="500"
                         height="500"

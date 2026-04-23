@@ -1,13 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Minus, Plus, Trash2, Truck, ShoppingBag, ArrowRight, Tag, Check, X } from 'lucide-react';
+import { Minus, Plus, Trash2, Truck, ShoppingBag, ArrowRight, Check, X } from 'lucide-react';
 import { Switch } from '../components/ui/switch';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'sonner';
 import SEO from '../components/SEO';
-import { resolveMediaUrl } from '../lib/utils';
+import {
+  FREE_SHIPPING_MESSAGE,
+  FREE_SHIPPING_THRESHOLD,
+  STANDARD_SHIPPING_FEE,
+  resolveMediaUrl,
+} from '../lib/utils';
 
 const API = process.env.REACT_APP_BACKEND_URL || "";
 
@@ -17,12 +22,11 @@ const CartPage = () => {
   const navigate = useNavigate();
   const [codSelected, setCodSelected] = useState(false);
   const [upsellProducts, setUpsellProducts] = useState([]);
-  const [promoCode, setPromoCode] = useState('');
-  const [promoApplied, setPromoApplied] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderDetails, setOrderDetails] = useState(null);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [shippingCheck, setShippingCheck] = useState(null);
   const [shippingForm, setShippingForm] = useState({
     name: user?.name || '',
     address: '',
@@ -41,32 +45,63 @@ const CartPage = () => {
         console.error('Failed to fetch upsells:', error);
       }
     };
+
     fetchUpsells();
   }, []);
+
+  useEffect(() => {
+    const pincode = shippingForm.pincode.trim();
+
+    if (pincode.length !== 6) {
+      setShippingCheck(null);
+      return;
+    }
+
+    let active = true;
+
+    axios.post(`${API}/api/check-pincode`, { pincode })
+      .then((response) => {
+        if (active) {
+          setShippingCheck(response.data);
+        }
+      })
+      .catch(() => {
+        if (active) {
+          setShippingCheck({
+            serviceable: false,
+            within_10km: false,
+            message: 'Unable to validate this pincode right now.'
+          });
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [shippingForm.pincode]);
+
+  const subtotal = cart.subtotal || 0;
+  const discount = cart.discount || 0;
+  const qualifiesForFreeShipping = subtotal >= FREE_SHIPPING_THRESHOLD && shippingCheck?.within_10km;
+  const shipping = qualifiesForFreeShipping ? 0 : STANDARD_SHIPPING_FEE;
+  const total = subtotal - discount + shipping;
+  const progressPercent = Math.min((subtotal / FREE_SHIPPING_THRESHOLD) * 100, 100);
+  const remaining = Math.max(FREE_SHIPPING_THRESHOLD - subtotal, 0);
 
   const updateQuantity = (productId, size, newQuantity) => {
     if (newQuantity < 1) {
       removeFromCart(productId, size);
       return;
     }
-    
-    const newItems = cart.items.map(item => {
+
+    const newItems = cart.items.map((item) => {
       if (item.product_id === productId && item.size === size) {
         return { ...item, quantity: newQuantity };
       }
       return item;
     });
-    
-    updateCart(newItems);
-  };
 
-  const applyPromoCode = () => {
-    if (promoCode.toUpperCase() === 'WELCOME8') {
-      setPromoApplied(true);
-      toast.success('Promo code applied! 8% off');
-    } else {
-      toast.error('Invalid promo code');
-    }
+    updateCart(newItems);
   };
 
   const handleCheckout = () => {
@@ -75,32 +110,37 @@ const CartPage = () => {
       navigate('/login');
       return;
     }
-    setShippingForm(prev => ({ ...prev, name: user?.name || '' }));
+
+    setShippingForm((prev) => ({ ...prev, name: user?.name || '' }));
     setShowCheckout(true);
   };
 
   const handlePlaceOrder = async (e) => {
     e.preventDefault();
+
+    if (!shippingCheck?.serviceable) {
+      toast.error('Please enter a valid serviceable pincode before placing the order.');
+      return;
+    }
+
     setCheckoutLoading(true);
     try {
       const orderData = {
-        items: cart.items.map(item => ({
+        items: cart.items.map((item) => ({
           product_id: item.product_id,
           name: item.name,
           quantity: item.quantity,
           price: item.price,
           size: item.size,
-          is_subscription: item.is_subscription || false
         })),
         subtotal,
         discount,
-        promo_discount: promoDiscount,
         shipping,
         total,
         payment_method: codSelected ? 'COD' : 'prepaid',
-        promo_code: promoApplied ? 'WELCOME8' : null,
         shipping_address: shippingForm
       };
+
       const response = await axios.post(`${API}/api/orders`, orderData);
       setOrderDetails(response.data);
       setOrderPlaced(true);
@@ -113,15 +153,6 @@ const CartPage = () => {
       setCheckoutLoading(false);
     }
   };
-
-  const shippingThreshold = 999;
-  const subtotal = cart.subtotal || 0;
-  const discount = cart.discount || 0;
-  const promoDiscount = promoApplied ? Math.round(subtotal * 0.08) : 0;
-  const shipping = subtotal >= shippingThreshold ? 0 : 50;
-  const total = subtotal - discount - promoDiscount + shipping;
-  const progressPercent = Math.min((subtotal / shippingThreshold) * 100, 100);
-  const remaining = Math.max(shippingThreshold - subtotal, 0);
 
   if (orderPlaced) {
     return (
@@ -163,302 +194,268 @@ const CartPage = () => {
 
   return (
     <>
-    <SEO title="Your Cart" description="Review your Krishi Foods cart, apply promo codes, and checkout securely." canonical="/cart" noindex={true} />
-    <div className="bg-[#F5EDD6] min-h-screen" data-testid="cart-page">
-      {/* Checkout Modal */}
-      {showCheckout && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" data-testid="checkout-modal">
-          <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-6 border-b border-[#2D5016]/10">
-              <h2 className="heading-h3">Shipping Details</h2>
-              <button onClick={() => setShowCheckout(false)} className="text-[#4A5D3F] hover:text-[#1A2F0D]">
-                <X size={20} />
-              </button>
-            </div>
-            <form onSubmit={handlePlaceOrder} className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-[#1A2F0D] mb-1">Full Name *</label>
-                <input
-                  type="text"
-                  required
-                  value={shippingForm.name}
-                  onChange={e => setShippingForm({ ...shippingForm, name: e.target.value })}
-                  className="input-krishi w-full"
-                  data-testid="shipping-name"
-                />
+      <SEO title="Your Cart" description="Review your Krishi Foods cart and checkout securely." canonical="/cart" noindex={true} />
+      <div className="bg-[#F5EDD6] min-h-screen" data-testid="cart-page">
+        {showCheckout && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" data-testid="checkout-modal">
+            <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between p-6 border-b border-[#2D5016]/10">
+                <h2 className="heading-h3">Shipping Details</h2>
+                <button onClick={() => setShowCheckout(false)} className="text-[#4A5D3F] hover:text-[#1A2F0D]">
+                  <X size={20} />
+                </button>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-[#1A2F0D] mb-1">Phone *</label>
-                <input
-                  type="tel"
-                  required
-                  value={shippingForm.phone}
-                  onChange={e => setShippingForm({ ...shippingForm, phone: e.target.value })}
-                  className="input-krishi w-full"
-                  data-testid="shipping-phone"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#1A2F0D] mb-1">Address *</label>
-                <textarea
-                  required
-                  rows={2}
-                  value={shippingForm.address}
-                  onChange={e => setShippingForm({ ...shippingForm, address: e.target.value })}
-                  className="input-krishi w-full resize-none"
-                  data-testid="shipping-address"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
+              <form onSubmit={handlePlaceOrder} className="p-6 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-[#1A2F0D] mb-1">City *</label>
+                  <label className="block text-sm font-medium text-[#1A2F0D] mb-1">Full Name *</label>
                   <input
                     type="text"
                     required
-                    value={shippingForm.city}
-                    onChange={e => setShippingForm({ ...shippingForm, city: e.target.value })}
+                    value={shippingForm.name}
+                    onChange={(e) => setShippingForm({ ...shippingForm, name: e.target.value })}
                     className="input-krishi w-full"
-                    data-testid="shipping-city"
+                    data-testid="shipping-name"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#1A2F0D] mb-1">State *</label>
+                  <label className="block text-sm font-medium text-[#1A2F0D] mb-1">Phone *</label>
                   <input
-                    type="text"
+                    type="tel"
                     required
-                    value={shippingForm.state}
-                    onChange={e => setShippingForm({ ...shippingForm, state: e.target.value })}
+                    value={shippingForm.phone}
+                    onChange={(e) => setShippingForm({ ...shippingForm, phone: e.target.value })}
                     className="input-krishi w-full"
-                    data-testid="shipping-state"
+                    data-testid="shipping-phone"
                   />
                 </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#1A2F0D] mb-1">Pincode *</label>
-                <input
-                  type="text"
-                  required
-                  maxLength={6}
-                  value={shippingForm.pincode}
-                  onChange={e => setShippingForm({ ...shippingForm, pincode: e.target.value })}
-                  className="input-krishi w-full"
-                  data-testid="shipping-pincode"
-                />
-              </div>
-              <div className="border-t border-[#2D5016]/10 pt-4 space-y-2 text-sm">
-                <div className="flex justify-between text-[#4A5D3F]">
-                  <span>Subtotal</span><span>₹{subtotal}</span>
-                </div>
-                {(discount + promoDiscount) > 0 && (
-                  <div className="flex justify-between text-[#2D5016]">
-                    <span>Discount</span><span>-₹{discount + promoDiscount}</span>
-                  </div>
-                )}
-                <div className="flex justify-between text-[#4A5D3F]">
-                  <span>Shipping</span>
-                  <span>{shipping === 0 ? <span className="text-[#2D5016]">FREE</span> : `₹${shipping}`}</span>
-                </div>
-                <div className="flex justify-between font-bold text-[#1A2F0D] text-base pt-2 border-t border-[#2D5016]/10">
-                  <span>Total</span><span>₹{total}</span>
-                </div>
-              </div>
-              <button
-                type="submit"
-                disabled={checkoutLoading}
-                className="btn-accent w-full disabled:opacity-50"
-                data-testid="place-order-btn"
-              >
-                {checkoutLoading ? 'Placing Order...' : codSelected ? 'Place Order (COD)' : `Pay ₹${total}`}
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
-      {/* Free Shipping Progress */}
-      <div className="bg-[#2D5016] py-4">
-        <div className="container-krishi">
-          <div className="text-center text-[#F5EDD6] mb-2">
-            {remaining > 0 ? (
-              <p>Add <span className="font-bold">₹{remaining}</span> more for FREE shipping!</p>
-            ) : (
-              <p className="font-medium">🎉 You've unlocked FREE shipping!</p>
-            )}
-          </div>
-          <div className="progress-bar max-w-md mx-auto">
-            <div className="progress-bar-fill bg-[#C8602B]" style={{ width: `${progressPercent}%` }}></div>
-          </div>
-        </div>
-      </div>
-
-      <div className="container-krishi py-8 md:py-12">
-        <h1 className="heading-h2 mb-8">Your Cart ({cart.items.length} items)</h1>
-
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Cart Items */}
-          <div className="lg:col-span-2 space-y-4">
-            {cart.items.map((item, index) => (
-              <div key={`${item.product_id}-${item.size}`} className="card-krishi flex gap-4" data-testid={`cart-item-${index}`}>
-                <div className="w-24 h-24 md:w-32 md:h-32 rounded-lg overflow-hidden flex-shrink-0">
-                  <img 
-                    src={resolveMediaUrl(item.image, API) || 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=200'}
-                    alt={item.name}
-                    className="w-full h-full object-cover"
+                <div>
+                  <label className="block text-sm font-medium text-[#1A2F0D] mb-1">Address *</label>
+                  <textarea
+                    required
+                    rows={2}
+                    value={shippingForm.address}
+                    onChange={(e) => setShippingForm({ ...shippingForm, address: e.target.value })}
+                    className="input-krishi w-full resize-none"
+                    data-testid="shipping-address"
                   />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-start gap-2">
-                    <div>
-                      <Link to={`/products/${item.product_id}`} className="font-semibold text-[#1A2F0D] hover:text-[#2D5016]">
-                        {item.name}
-                      </Link>
-                      {item.size && <p className="text-sm text-[#4A5D3F]">Size: {item.size}</p>}
-                      {item.is_subscription && (
-                        <span className="text-xs bg-[#2D5016] text-white px-2 py-0.5 rounded-full">
-                          Subscribe & Save 10%
-                        </span>
-                      )}
-                    </div>
-                    <button 
-                      onClick={() => removeFromCart(item.product_id, item.size)}
-                      className="text-[#4A5D3F] hover:text-red-600 transition-colors"
-                      data-testid={`remove-item-${index}`}
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  </div>
-                  
-                  <div className="flex items-center justify-between mt-4">
-                    <div className="flex items-center border border-[#2D5016]/20 rounded-full">
-                      <button 
-                        onClick={() => updateQuantity(item.product_id, item.size, item.quantity - 1)}
-                        className="w-8 h-8 flex items-center justify-center text-[#2D5016] hover:bg-[#2D5016]/5 rounded-l-full"
-                        data-testid={`decrease-${index}`}
-                      >
-                        <Minus size={14} />
-                      </button>
-                      <span className="w-8 text-center text-sm font-medium">{item.quantity}</span>
-                      <button 
-                        onClick={() => updateQuantity(item.product_id, item.size, item.quantity + 1)}
-                        className="w-8 h-8 flex items-center justify-center text-[#2D5016] hover:bg-[#2D5016]/5 rounded-r-full"
-                        data-testid={`increase-${index}`}
-                      >
-                        <Plus size={14} />
-                      </button>
-                    </div>
-                    <p className="font-bold text-[#2D5016]">₹{Math.round(item.price * item.quantity)}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Order Summary */}
-          <div className="lg:col-span-1">
-            <div className="card-krishi sticky top-24">
-              <h2 className="heading-h3 mb-6">Order Summary</h2>
-              
-              {/* Promo Code */}
-              <div className="mb-6">
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="Promo code"
-                    value={promoCode}
-                    onChange={(e) => setPromoCode(e.target.value)}
-                    className="input-krishi flex-1"
-                    disabled={promoApplied}
-                    data-testid="promo-input"
-                  />
-                  <button 
-                    onClick={applyPromoCode}
-                    className="btn-secondary"
-                    disabled={promoApplied}
-                    data-testid="apply-promo"
-                  >
-                    {promoApplied ? 'Applied!' : 'Apply'}
-                  </button>
-                </div>
-                {promoApplied && (
-                  <p className="text-sm text-[#2D5016] mt-2 flex items-center gap-1">
-                    <Tag size={14} /> WELCOME8 - 8% off applied
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-3 border-t border-[#2D5016]/10 pt-4">
-                <div className="flex justify-between text-[#4A5D3F]">
-                  <span>Subtotal</span>
-                  <span>₹{subtotal}</span>
-                </div>
-                {discount > 0 && (
-                  <div className="flex justify-between text-[#2D5016]">
-                    <span>Quantity Discount</span>
-                    <span>-₹{discount}</span>
-                  </div>
-                )}
-                {promoDiscount > 0 && (
-                  <div className="flex justify-between text-[#2D5016]">
-                    <span>Promo Discount (8%)</span>
-                    <span>-₹{promoDiscount}</span>
-                  </div>
-                )}
-                <div className="flex justify-between text-[#4A5D3F]">
-                  <span>Shipping</span>
-                  <span>{shipping === 0 ? <span className="text-[#2D5016]">FREE</span> : `₹${shipping}`}</span>
-                </div>
-                <div className="flex justify-between text-xl font-bold text-[#1A2F0D] pt-3 border-t border-[#2D5016]/10">
-                  <span>Total</span>
-                  <span>₹{total}</span>
-                </div>
-              </div>
-
-              {/* COD Toggle */}
-              <div className="flex items-center justify-between py-4 border-t border-[#2D5016]/10 mt-4">
-                <span className="text-[#1A2F0D]">Cash on Delivery</span>
-                <Switch 
-                  checked={codSelected} 
-                  onCheckedChange={setCodSelected}
-                  data-testid="cod-toggle"
-                />
-              </div>
-
-              <button onClick={handleCheckout} className="btn-accent w-full mt-4" data-testid="checkout-btn">
-                {codSelected ? 'Place Order (COD)' : 'Proceed to Pay'}
-              </button>
-
-              <div className="flex items-center justify-center gap-2 mt-4 text-sm text-[#4A5D3F]">
-                <Truck size={16} />
-                <span>Free shipping on orders above ₹999</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Upsell Section */}
-        {upsellProducts.length > 0 && (
-          <section className="mt-16" data-testid="upsell-section">
-            <h2 className="heading-h3 mb-6">Customers Also Bought</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {upsellProducts.map((product) => (
-                <Link key={product.slug} to={`/products/${product.slug}`} className="product-card">
-                  <div className="aspect-square overflow-hidden">
-                    <img 
-                      src={resolveMediaUrl(product.images?.[0], API) || 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500'} 
-                      alt={product.name}
-                      className="product-card-image"
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-[#1A2F0D] mb-1">City *</label>
+                    <input
+                      type="text"
+                      required
+                      value={shippingForm.city}
+                      onChange={(e) => setShippingForm({ ...shippingForm, city: e.target.value })}
+                      className="input-krishi w-full"
+                      data-testid="shipping-city"
                     />
                   </div>
-                  <div className="p-4">
-                    <h3 className="font-semibold text-[#1A2F0D] mb-2 text-sm">{product.name}</h3>
-                    <span className="font-bold text-[#2D5016]">₹{product.price}</span>
+                  <div>
+                    <label className="block text-sm font-medium text-[#1A2F0D] mb-1">State *</label>
+                    <input
+                      type="text"
+                      required
+                      value={shippingForm.state}
+                      onChange={(e) => setShippingForm({ ...shippingForm, state: e.target.value })}
+                      className="input-krishi w-full"
+                      data-testid="shipping-state"
+                    />
                   </div>
-                </Link>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#1A2F0D] mb-1">Pincode *</label>
+                  <input
+                    type="text"
+                    required
+                    maxLength={6}
+                    value={shippingForm.pincode}
+                    onChange={(e) => setShippingForm({ ...shippingForm, pincode: e.target.value })}
+                    className="input-krishi w-full"
+                    data-testid="shipping-pincode"
+                  />
+                </div>
+
+                <div className="border-t border-[#2D5016]/10 pt-4 space-y-2 text-sm">
+                  <div className="flex justify-between text-[#4A5D3F]">
+                    <span>Subtotal</span><span>₹{subtotal}</span>
+                  </div>
+                  {discount > 0 && (
+                    <div className="flex justify-between text-[#2D5016]">
+                      <span>5L Oil Offer</span><span>-₹{discount}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-[#4A5D3F]">
+                    <span>Shipping</span>
+                    <span>{shipping === 0 ? <span className="text-[#2D5016]">FREE</span> : `₹${shipping}`}</span>
+                  </div>
+                  <div className="flex justify-between font-bold text-[#1A2F0D] text-base pt-2 border-t border-[#2D5016]/10">
+                    <span>Total</span><span>₹{total}</span>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={checkoutLoading}
+                  className="btn-accent w-full disabled:opacity-50"
+                  data-testid="place-order-btn"
+                >
+                  {checkoutLoading ? 'Placing Order...' : codSelected ? 'Place Order (COD)' : `Pay ₹${total}`}
+                </button>
+
+                <p className="text-sm text-[#4A5D3F]">{FREE_SHIPPING_MESSAGE}</p>
+                {shippingCheck && (
+                  <p className={`text-sm ${shippingCheck.within_10km ? 'text-[#2D5016]' : 'text-[#4A5D3F]'}`}>
+                    {shippingCheck.message}
+                  </p>
+                )}
+              </form>
+            </div>
+          </div>
+        )}
+
+        <div className="bg-[#2D5016] py-4">
+          <div className="container-krishi">
+            <div className="text-center text-[#F5EDD6] mb-2">
+              {remaining > 0 ? (
+                <p>Add <span className="font-bold">₹{remaining}</span> more to unlock free shipping within 10 km.</p>
+              ) : (
+                <p className="font-medium">Free shipping unlocks at checkout for deliveries within 10 km.</p>
+              )}
+            </div>
+            <div className="progress-bar max-w-md mx-auto">
+              <div className="progress-bar-fill bg-[#C8602B]" style={{ width: `${progressPercent}%` }}></div>
+            </div>
+            <p className="mt-2 text-center text-sm text-[#F5EDD6]/80">{FREE_SHIPPING_MESSAGE}</p>
+          </div>
+        </div>
+
+        <div className="container-krishi py-8 md:py-12">
+          <h1 className="heading-h2 mb-8">Your Cart ({cart.items.length} items)</h1>
+
+          <div className="grid lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 space-y-4">
+              {cart.items.map((item, index) => (
+                <div key={`${item.product_id}-${item.size}`} className="card-krishi flex gap-4" data-testid={`cart-item-${index}`}>
+                  <div className="w-24 h-24 md:w-32 md:h-32 rounded-lg overflow-hidden flex-shrink-0 bg-white">
+                    <img
+                      src={resolveMediaUrl(item.image, API) || 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=200'}
+                      alt={item.name}
+                      className="w-full h-full object-contain p-2"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-start gap-2">
+                      <div>
+                        <Link to={`/products/${item.product_id}`} className="font-semibold text-[#1A2F0D] hover:text-[#2D5016]">
+                          {item.name}
+                        </Link>
+                        {item.size && <p className="text-sm text-[#4A5D3F]">Size: {item.size}</p>}
+                      </div>
+                      <button
+                        onClick={() => removeFromCart(item.product_id, item.size)}
+                        className="text-[#4A5D3F] hover:text-red-600 transition-colors"
+                        data-testid={`remove-item-${index}`}
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
+
+                    <div className="flex items-center justify-between mt-4">
+                      <div className="flex items-center border border-[#2D5016]/20 rounded-full">
+                        <button
+                          onClick={() => updateQuantity(item.product_id, item.size, item.quantity - 1)}
+                          className="w-8 h-8 flex items-center justify-center text-[#2D5016] hover:bg-[#2D5016]/5 rounded-l-full"
+                          data-testid={`decrease-${index}`}
+                        >
+                          <Minus size={14} />
+                        </button>
+                        <span className="w-8 text-center text-sm font-medium">{item.quantity}</span>
+                        <button
+                          onClick={() => updateQuantity(item.product_id, item.size, item.quantity + 1)}
+                          className="w-8 h-8 flex items-center justify-center text-[#2D5016] hover:bg-[#2D5016]/5 rounded-r-full"
+                          data-testid={`increase-${index}`}
+                        >
+                          <Plus size={14} />
+                        </button>
+                      </div>
+                      <p className="font-bold text-[#2D5016]">₹{Math.round(item.price * item.quantity)}</p>
+                    </div>
+                  </div>
+                </div>
               ))}
             </div>
-          </section>
-        )}
+
+            <div className="lg:col-span-1">
+              <div className="card-krishi sticky top-24">
+                <h2 className="heading-h3 mb-6">Order Summary</h2>
+
+                <div className="space-y-3 border-t border-[#2D5016]/10 pt-4">
+                  <div className="flex justify-between text-[#4A5D3F]">
+                    <span>Subtotal</span>
+                    <span>₹{subtotal}</span>
+                  </div>
+                  {discount > 0 && (
+                    <div className="flex justify-between text-[#2D5016]">
+                      <span>5L Oil Offer</span>
+                      <span>-₹{discount}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-[#4A5D3F]">
+                    <span>Shipping</span>
+                    <span>{shipping === 0 ? <span className="text-[#2D5016]">FREE</span> : `₹${shipping}`}</span>
+                  </div>
+                  <div className="flex justify-between text-xl font-bold text-[#1A2F0D] pt-3 border-t border-[#2D5016]/10">
+                    <span>Total</span>
+                    <span>₹{total}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between py-4 border-t border-[#2D5016]/10 mt-4">
+                  <span className="text-[#1A2F0D]">Cash on Delivery</span>
+                  <Switch
+                    checked={codSelected}
+                    onCheckedChange={setCodSelected}
+                    data-testid="cod-toggle"
+                  />
+                </div>
+
+                <button onClick={handleCheckout} className="btn-accent w-full mt-4" data-testid="checkout-btn">
+                  {codSelected ? 'Place Order (COD)' : 'Proceed to Pay'}
+                </button>
+
+                <div className="flex items-center justify-center gap-2 mt-4 text-sm text-[#4A5D3F]">
+                  <Truck size={16} />
+                  <span>{FREE_SHIPPING_MESSAGE}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {upsellProducts.length > 0 && (
+            <section className="mt-16" data-testid="upsell-section">
+              <h2 className="heading-h3 mb-6">Customers Also Bought</h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {upsellProducts.map((product) => (
+                  <Link key={product.slug} to={`/products/${product.slug}`} className="product-card">
+                    <div className="aspect-square overflow-hidden bg-white">
+                      <img
+                        src={resolveMediaUrl(product.images?.[0], API) || 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500'}
+                        alt={product.name}
+                        className="w-full h-full object-contain p-4"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-semibold text-[#1A2F0D] mb-2 text-sm">{product.name}</h3>
+                      <span className="font-bold text-[#2D5016]">₹{product.price}</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
       </div>
-    </div>
     </>
   );
 };

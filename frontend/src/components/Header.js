@@ -1,9 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, ShoppingCart, User, Search, Phone } from 'lucide-react';
-import axios from 'axios';
-
-const API = process.env.REACT_APP_BACKEND_URL || '';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import {
@@ -17,19 +14,13 @@ const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [logoUrl, setLogoUrl] = useState('/images/branding/krishi-logo.png');
   const { user, logout } = useAuth();
   const { cartItemsCount } = useCart();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    axios.get(`${API}/api/images?page=logo`)
-      .then(r => { if (r.data.length > 0) setLogoUrl(`${API}/api/images/${r.data[0].id}`); })
-      .catch(() => {});
-  }, []);
+  const logoUrl = '/images/branding/krishi-logo.png';
 
   const collections = [
-    { name: 'Oil', slug: 'cold-pressed-oils' },
+    { name: 'Cold-Pressed Oil', slug: 'cold-pressed-oils' },
     { name: 'Ghee & Honey', slug: 'ghee-honey' },
     { name: 'Jaggery & Salt', slug: 'jaggery-rocksalt' },
     { name: 'Rices', slug: 'traditional-rices' },
@@ -151,9 +142,6 @@ const Header = () => {
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link to="/account/orders" className="cursor-pointer">Orders</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/account/subscriptions" className="cursor-pointer">Subscriptions</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600">
                     Logout

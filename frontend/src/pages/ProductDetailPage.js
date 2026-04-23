@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Minus, Plus, ShoppingCart, Heart, Truck, Shield, RefreshCw, ChevronDown, Star, MapPin, Check, X } from 'lucide-react';
+import { Minus, Plus, ShoppingCart, Truck, Shield, RefreshCw, MapPin, Check, X } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../components/ui/accordion';
-import { Switch } from '../components/ui/switch';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'sonner';
 import SEO from '../components/SEO';
-import { resolveMediaUrl } from '../lib/utils';
+import { FREE_SHIPPING_MESSAGE, OIL_COLLECTION_SLUG, isFiveLitreSize, resolveMediaUrl } from '../lib/utils';
 
 const API = process.env.REACT_APP_BACKEND_URL || "";
 
@@ -24,8 +22,6 @@ const ProductDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
-  const [isSubscription, setIsSubscription] = useState(false);
-  const [subscriptionFrequency, setSubscriptionFrequency] = useState('monthly');
   const [pincode, setPincode] = useState('');
   const [pincodeResult, setPincodeResult] = useState(null);
   const [mainImage, setMainImage] = useState(0);
@@ -74,11 +70,10 @@ const ProductDetailPage = () => {
         product_id: product.slug,
         quantity,
         size: selectedSize?.name || null,
-        is_subscription: isSubscription,
-        frequency: isSubscription ? subscriptionFrequency : null,
         price: calculatePrice(),
         name: product.name,
-        image: resolveMediaUrl(product.images?.[0], API)
+        image: resolveMediaUrl(product.images?.[0], API),
+        collection: product.collection,
       });
       toast.success(`${product.name} added to cart!`);
     } catch (error) {
@@ -106,17 +101,10 @@ const ProductDetailPage = () => {
     if (selectedSize?.price_modifier) {
       price += selectedSize.price_modifier;
     }
-    if (isSubscription) {
-      price = price * 0.9; // 10% off
-    }
     return Math.round(price);
   };
 
-  const calculateSavings = () => {
-    if (quantity >= 3) return 60;
-    if (quantity >= 2) return 30;
-    return 0;
-  };
+  const oilOfferApplies = product.collection === OIL_COLLECTION_SLUG && isFiveLitreSize(selectedSize?.name);
 
   if (loading) {
     return (
@@ -189,7 +177,7 @@ const ProductDetailPage = () => {
     <>
     <SEO
       title={`${product.name} - Buy Online`}
-      description={`Buy ${product.name} from Krishi Foods. ${product.description?.slice(0, 120)}. Free shipping above Rs999. 100% pure, no chemicals.`}
+      description={`Buy ${product.name} from Krishi Foods. ${product.description?.slice(0, 120)}. ${FREE_SHIPPING_MESSAGE}. 100% pure, no chemicals.`}
       canonical={`/products/${product.slug}`}
       ogType="product"
       schema={productSchema}
@@ -217,7 +205,7 @@ const ProductDetailPage = () => {
               <img
                 src={resolveMediaUrl(product.images?.[mainImage], API) || 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=800'}
                 alt={product.name}
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-700 cursor-zoom-in"
+                className={`w-full h-full hover:scale-105 transition-transform duration-700 cursor-zoom-in ${product.collection === OIL_COLLECTION_SLUG ? 'object-contain p-4 bg-white' : 'object-cover'}`}
                 width="800"
                 height="800"
               />
@@ -232,7 +220,7 @@ const ProductDetailPage = () => {
                       mainImage === idx ? 'border-[#2D5016]' : 'border-transparent'
                     }`}
                   >
-                    <img src={resolveMediaUrl(img, API)} alt="" className="w-full h-full object-cover" />
+                    <img src={resolveMediaUrl(img, API)} alt="" className={`w-full h-full ${product.collection === OIL_COLLECTION_SLUG ? 'object-contain bg-white p-1' : 'object-cover'}`} />
                   </button>
                 ))}
               </div>
@@ -251,9 +239,6 @@ const ProductDetailPage = () => {
               <span className="text-3xl font-bold text-[#2D5016]">Rs{calculatePrice()}</span>
               {product.compare_price && (
                 <span className="text-xl text-[#4A5D3F] line-through">Rs{product.compare_price}</span>
-              )}
-              {isSubscription && (
-                <span className="text-sm bg-[#2D5016] text-white px-2 py-1 rounded-full">10% off - Subscribe</span>
               )}
             </div>
 
@@ -287,50 +272,20 @@ const ProductDetailPage = () => {
               </div>
             )}
 
-            {/* Subscribe & Save */}
-            <div className="card-krishi bg-[#EBE1C5]/50">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <p className="font-medium text-[#2D5016]">Subscribe & Save 10%</p>
-                  <p className="text-sm text-[#4A5D3F]">Never run out of your favorites</p>
-                </div>
-                <Switch 
-                  checked={isSubscription} 
-                  onCheckedChange={setIsSubscription}
-                  data-testid="subscription-toggle"
-                />
+            {product.collection === OIL_COLLECTION_SLUG && (
+              <div className="rounded-xl border border-[#2D5016]/15 bg-[#2D5016]/5 p-4">
+                <p className="font-medium text-[#2D5016]">Buy 5L and get ₹100 off</p>
+                <p className="mt-1 text-sm text-[#4A5D3F]">
+                  Applicable only on cold-pressed oil products with a 5L pack size.
+                </p>
               </div>
-              {isSubscription && (
-                <div className="flex gap-3">
-                  {['monthly', 'bi-monthly'].map((freq) => (
-                    <button
-                      key={freq}
-                      onClick={() => setSubscriptionFrequency(freq)}
-                      className={`flex-1 py-2 rounded-lg border text-sm font-medium transition-all ${
-                        subscriptionFrequency === freq
-                          ? 'border-[#2D5016] bg-[#2D5016] text-white'
-                          : 'border-[#2D5016]/20 text-[#1A2F0D]'
-                      }`}
-                      data-testid={`freq-${freq}`}
-                    >
-                      {freq === 'monthly' ? 'Every Month' : 'Every 2 Months'}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+            )}
 
-            {/* Quantity Discount */}
-            <div className="bg-[#2D5016]/5 rounded-xl p-4">
-              <p className="font-medium text-[#2D5016] mb-2">Quantity Discounts</p>
-              <div className="flex gap-4 text-sm">
-                <span className={`${quantity >= 2 ? 'text-[#2D5016] font-medium' : 'text-[#4A5D3F]'}`}>
-                  Buy 2 save Rs30
-                </span>
-                <span className={`${quantity >= 3 ? 'text-[#2D5016] font-medium' : 'text-[#4A5D3F]'}`}>
-                  Buy 3 save Rs60
-                </span>
-              </div>
+            <div className="rounded-xl border border-[#2D5016]/15 bg-white p-4">
+              <p className="font-medium text-[#2D5016]">{FREE_SHIPPING_MESSAGE}</p>
+              <p className="mt-1 text-sm text-[#4A5D3F]">
+                Delivery location is validated by pincode during checkout before free shipping is applied.
+              </p>
             </div>
 
             {/* Quantity & Add to Cart */}
@@ -354,7 +309,7 @@ const ProductDetailPage = () => {
               </div>
               <button onClick={handleAddToCart} className="btn-primary flex-1" data-testid="add-to-cart-btn">
                 <ShoppingCart className="mr-2" size={18} />
-                Add to Cart {calculateSavings() > 0 && `(Save Rs${calculateSavings()})`}
+                Add to Cart {oilOfferApplies && quantity > 0 ? `(Save ₹${quantity * 100})` : ''}
               </button>
             </div>
 
@@ -396,7 +351,7 @@ const ProductDetailPage = () => {
                 <Shield size={16} className="text-[#2D5016]" /> FSSAI Certified
               </div>
               <div className="flex items-center gap-2 text-sm text-[#4A5D3F]">
-                <Truck size={16} className="text-[#2D5016]" /> Free shipping Rs999+
+                <Truck size={16} className="text-[#2D5016]" /> {FREE_SHIPPING_MESSAGE}
               </div>
               <div className="flex items-center gap-2 text-sm text-[#4A5D3F]">
                 <RefreshCw size={16} className="text-[#2D5016]" /> Easy returns

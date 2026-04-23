@@ -2204,6 +2204,33 @@ SERVICEABLE_PINCODES = [
     "411001", "411002", "411003", "411014", "411028",
 ]
 
+FREE_SHIPPING_THRESHOLD = 2000
+FREE_SHIPPING_RADIUS_KM = 10
+STANDARD_SHIPPING_FEE = 50
+OIL_COLLECTION_SLUG = "cold-pressed-oils"
+
+
+def is_five_litre_size(size_name: Optional[str]) -> bool:
+    if not size_name:
+        return False
+    normalized = str(size_name).lower().replace(" ", "")
+    return any(token in normalized for token in ["5l", "5lt", "5ltr", "5liter", "5litre"])
+
+
+def calculate_oil_offer_discount(items: List[Dict[str, Any]]) -> int:
+    discount = 0
+    for item in items:
+        if item.get("collection") != OIL_COLLECTION_SLUG:
+            continue
+        if not is_five_litre_size(item.get("size")):
+            continue
+        discount += int(item.get("quantity", 0)) * 100
+    return discount
+
+
+def is_within_free_shipping_radius(pincode: Optional[str]) -> bool:
+    return bool(pincode and pincode in SERVICEABLE_PINCODES)
+
 
 def _get_sizes(product: dict) -> list:
     slug = product["slug"]
@@ -2397,19 +2424,19 @@ async def seed_products():
 
 PRODUCT_IMAGE_ASSET_MAP = {
     "groundnut-oil": ["/images/products/groundnut-oil-main.jpeg"],
-    "coconut-oil": ["/images/products/coconut-oil-main.jpeg"],
-    "sunflower-oil": ["/images/products/sunflower-oil-main.jpeg"],
-    "deepam-oil": ["/images/products/deepam-oil-main.jpeg"],
-    "castor-oil": ["/images/products/castor-oil-main.jpeg"],
-    "gingelly-oil": ["/images/products/gingelly-oil-main.jpeg"],
-    "safflower-oil": ["/images/products/safflower-oil-main.jpeg"],
-    "neem-oil": ["/images/products/neem-oil-main.jpeg"],
-    "hippe-oil": ["/images/products/hippe-oil-main.jpeg"],
+    "coconut-oil": ["/images/products/coconut-oil-main.png"],
+    "sunflower-oil": ["/images/products/sunflower-oil-main.jpg"],
+    "deepam-oil": ["/images/products/deepam-oil-main.png"],
+    "castor-oil": ["/images/products/castor-oil-main.png"],
+    "gingelly-oil": ["/images/products/gingelly-oil-main.png"],
+    "safflower-oil": ["/images/products/safflower-oil-main.png"],
+    "neem-oil": ["/images/products/neem-oil-main.png"],
+    "hippe-oil": ["/images/products/hippe-oil-main.jpg"],
     "almond-oil": ["/images/products/almond-oil-main.jpeg"],
     "virgin-coconut-oil": ["/images/products/virgin-coconut-oil-main.jpeg"],
     "mustard-oil": ["/images/products/mustard-oil-main.jpeg"],
     "flaxseed-oil": ["/images/products/flaxseed-oil-main.jpeg"],
-    "niger-seed-oil": ["/images/products/niger-seed-oil-main.jpeg"],
+    "niger-seed-oil": ["/images/products/niger-seed-oil-main.png"],
     "pongomia-oil": ["/images/products/pongomia-oil-main.jpeg"],
     "desi-ghee": ["/images/products/desi-ghee-main.webp"],
     "a2-ghee": ["/images/products/a2-ghee-main.webp"],
@@ -2846,8 +2873,6 @@ async def update_cart(data: CartUpdate, request: Request, user: Optional[dict] =
                 for size in product.get("sizes", []):
                     if size["name"] == item.size:
                         price += size.get("price_modifier", 0)
-            if item.is_subscription:
-                price = price * 0.9
 
             items.append({
                 "product_id": item.product_id,
@@ -2855,14 +2880,12 @@ async def update_cart(data: CartUpdate, request: Request, user: Optional[dict] =
                 "price": round(price),
                 "quantity": item.quantity,
                 "size": item.size,
-                "is_subscription": item.is_subscription,
-                "frequency": item.frequency,
+                "collection": product["collection"],
                 "image": product["images"][0] if product.get("images") else ""
             })
             total += round(price) * item.quantity
 
-    total_items = sum(item.quantity for item in data.items)
-    discount = 60 if total_items >= 3 else 30 if total_items >= 2 else 0
+    discount = calculate_oil_offer_discount(items)
 
     cart_data = {
         "items": items,
@@ -2902,8 +2925,6 @@ async def add_to_cart(item: CartItem, request: Request, user: Optional[dict] = D
                 for size in product.get("sizes", []):
                     if size["name"] == item.size:
                         price += size.get("price_modifier", 0)
-            if item.is_subscription:
-                price = price * 0.9
 
             items.append({
                 "product_id": item.product_id,
@@ -2911,14 +2932,12 @@ async def add_to_cart(item: CartItem, request: Request, user: Optional[dict] = D
                 "price": round(price),
                 "quantity": item.quantity,
                 "size": item.size,
-                "is_subscription": item.is_subscription,
-                "frequency": item.frequency,
+                "collection": product["collection"],
                 "image": product["images"][0] if product.get("images") else ""
             })
 
     total = sum(i["price"] * i["quantity"] for i in items)
-    total_items = sum(i["quantity"] for i in items)
-    discount = 60 if total_items >= 3 else 30 if total_items >= 2 else 0
+    discount = calculate_oil_offer_discount(items)
 
     cart_data = {
         "user_id": user["_id"],
@@ -2962,6 +2981,7 @@ async def create_order(data: OrderCreate, user: dict = Depends(get_current_user)
                 "price": round(price),
                 "quantity": item.quantity,
                 "size": item.size,
+                "collection": product["collection"],
                 "image": product["images"][0] if product.get("images") else ""
             })
             total += round(price) * item.quantity
@@ -2970,9 +2990,9 @@ async def create_order(data: OrderCreate, user: dict = Depends(get_current_user)
     if stock_updates:
         await db.products.bulk_write(stock_updates)
 
-    total_items = sum(item.quantity for item in data.items)
-    discount = 60 if total_items >= 3 else 30 if total_items >= 2 else 0
-    shipping = 0 if total >= 999 else 50
+    discount = calculate_oil_offer_discount(items)
+    within_radius = is_within_free_shipping_radius(data.shipping_address.get("pincode"))
+    shipping = 0 if total >= FREE_SHIPPING_THRESHOLD and within_radius else STANDARD_SHIPPING_FEE
 
     order_doc = {
         "user_id": user["_id"],
@@ -2984,23 +3004,13 @@ async def create_order(data: OrderCreate, user: dict = Depends(get_current_user)
         "shipping_address": data.shipping_address,
         "payment_method": data.payment_method,
         "status": "pending",
-        "created_at": datetime.now(timezone.utc)
+        "created_at": datetime.now(timezone.utc),
+        "free_shipping_applied": shipping == 0,
+        "within_10km_radius": within_radius,
     }
 
     result = await db.orders.insert_one(order_doc)
     order_id = str(result.inserted_id)
-
-    if data.is_subscription:
-        next_delivery = datetime.now(timezone.utc) + timedelta(days=30)
-        await db.subscriptions.insert_one({
-            "user_id": user["_id"],
-            "order_id": order_id,
-            "items": items,
-            "frequency": data.subscription_frequency or "monthly",
-            "status": "active",
-            "next_delivery_date": next_delivery,
-            "created_at": datetime.now(timezone.utc)
-        })
 
     await db.carts.delete_one({"user_id": user["_id"]})
     return {"order_id": order_id, "status": "pending", "total": order_doc["total"]}
@@ -3518,12 +3528,21 @@ async def submit_contact(data: ContactForm):
 @api_router.post("/check-pincode")
 async def check_pincode(data: PincodeCheck):
     is_serviceable = data.pincode in SERVICEABLE_PINCODES
+    within_10km = is_within_free_shipping_radius(data.pincode)
     delivery_days = 3 if is_serviceable else 0
     return {
         "pincode": data.pincode,
         "serviceable": is_serviceable,
+        "within_10km": within_10km,
+        "free_shipping_eligible": within_10km,
         "delivery_days": delivery_days,
-        "message": f"Delivery available in {delivery_days} days" if is_serviceable else "Sorry, we don't deliver to this pincode yet"
+        "message": (
+            f"Delivery available in {delivery_days} days. Free shipping on orders above ₹{FREE_SHIPPING_THRESHOLD} within {FREE_SHIPPING_RADIUS_KM} km."
+            if is_serviceable and within_10km
+            else f"Delivery available in {delivery_days} days"
+            if is_serviceable
+            else "Sorry, we don't deliver to this pincode yet"
+        )
     }
 
 
@@ -3546,7 +3565,7 @@ async def calculate_bundle(items: List[str]):
         if product:
             bundle_items.append(product)
             total += product["price"]
-    discount = 60 if len(items) >= 3 else 30 if len(items) >= 2 else 0
+    discount = 0
     return {"items": bundle_items, "subtotal": total, "discount": discount, "total": total - discount}
 
 

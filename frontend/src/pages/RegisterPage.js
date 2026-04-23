@@ -47,7 +47,7 @@ const RegisterPage = () => {
     <>
     <SEO
       title="Create Your Account"
-      description="Join Krishi Foods and get access to exclusive member deals, order tracking, and Subscribe & Save on pure cold-pressed oils and traditional Indian foods."
+      description="Join Krishi Foods for easy order tracking and a smoother shopping experience across pure cold-pressed oils and traditional Indian foods."
       canonical="/register"
       noindex={true}
     />
@@ -55,9 +55,7 @@ const RegisterPage = () => {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link to="/" className="inline-block">
-            <span className="text-3xl font-bold text-[#2D5016]" style={{ fontFamily: 'Playfair Display, serif' }}>
-              Krishi
-            </span>
+            <img src="/images/branding/krishi-logo.png" alt="Krishi" className="h-14 w-auto mx-auto" />
           </Link>
           <h1 className="heading-h2 mt-6 mb-2">Create Account</h1>
           <p className="text-[#4A5D3F]">Join the Krishi family today</p>

@@ -12,21 +12,13 @@ const API = process.env.REACT_APP_BACKEND_URL || "";
 
 const heroSlides = [
   {
-    image: '/images/hero/1.png',
-    alt: 'Krishi hero slide showing Kallu Ghana introduction',
-  },
-  {
-    image: '/images/hero/2.png',
-    alt: 'Krishi hero slide showing wooden-pressed oils from Indian farms',
-  },
-  {
-    image: '/images/hero/3.png',
-    alt: 'Krishi hero slide showing pure goodness with no heat or chemicals',
+    image: '/images/hero/oil-hero-banner.png',
+    alt: 'Traditional cold-pressed oil extraction banner',
   },
 ];
 
 const featuredCollections = [
-  { slug: 'cold-pressed-oils', name: 'Cold Pressed Oils', image: '/images/collections/cold_pressed_oils.png', href: '/collections/cold-pressed-oils' },
+  { slug: 'cold-pressed-oils', name: 'Cold-Pressed Oil', image: '/images/collections/cold_pressed_oils.png', href: '/collections/cold-pressed-oils' },
   { slug: 'traditional-rices', name: 'Traditional Rices', image: '/images/collections/traditional_rices.png', href: '/collections/traditional-rices' },
   { slug: 'unpolished-millets', name: 'Unpolished Millets', image: '/images/collections/upolished_millets.png', href: '/collections/unpolished-millets' },
   { slug: 'spices', name: 'Spices & Pulses', image: '/images/collections/spices_pulses.png', href: '/collections/spices' },
@@ -43,18 +35,16 @@ const HomePage = () => {
   const [blogPosts, setBlogPosts] = useState([]);
   const [heroIndex, setHeroIndex] = useState(0);
 
-  const { images: heroImages, imgUrl: heroImgUrl } = usePageImages('hero');
   const { images: homeImages, imgUrl: homeImgUrl } = usePageImages('home');
   const { videos: homeVideos, vidUrl: homeVidUrl } = usePageVideos('home');
 
   const activeSlidesRef = React.useRef(heroSlides);
-  const cmsHeroImage = getImage('hero_image', '');
-  const cmsHeroTitle = getText('hero_title', 'Pure. Cold Pressed.\nChemical-Free.');
-  const activeSlides = cmsHeroImage
-    ? [{ image: cmsHeroImage, alt: 'CMS hero image' }]
-    : heroImages.length > 0
-    ? heroImages.map(img => ({ image: heroImgUrl(img.id), alt: img.name }))
-    : heroSlides;
+  const heroTitleLines = [
+    'Pure Cold-Pressed',
+    'Traditionally Extracted',
+    'Using Stone and Wood',
+  ];
+  const activeSlides = heroSlides;
   activeSlidesRef.current = activeSlides;
 
   useEffect(() => {
@@ -84,7 +74,7 @@ const HomePage = () => {
     { icon: Shield, text: 'FSSAI Certified' },
     { icon: Leaf, text: 'Farm to Bottle' },
     { icon: Users, text: '10,000+ Families' },
-    { icon: Truck, text: 'Free Shipping Rs999+' },
+    { icon: Truck, text: 'Free Shipping Above ₹2000' },
   ];
 
   const comparisonData = {
@@ -107,7 +97,7 @@ const HomePage = () => {
   const reviews = [
     { name: 'Priya S.', location: 'Bangalore', rating: 5, text: 'The groundnut oil tastes exactly like what my grandmother used to make!', image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100' },
     { name: 'Rajesh K.', location: 'Chennai', rating: 5, text: 'Finally found authentic cold-pressed oils. The difference is noticeable.', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100' },
-    { name: 'Meera R.', location: 'Mumbai', rating: 5, text: 'Subscribe & Save is brilliant! Never run out of my favorite oils now.', image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100' },
+    { name: 'Meera R.', location: 'Mumbai', rating: 5, text: 'The aroma and freshness make every bottle feel genuinely traditional.', image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100' },
   ];
 
   const cmsCollectionCards = Array.isArray(getSection('collections_cards', null)) ? getSection('collections_cards', []) : [];
@@ -192,7 +182,7 @@ const HomePage = () => {
     <>
     <SEO
       title="Pure Cold-Pressed Oils & Traditional Indian Foods"
-      description="Buy 100% pure cold-pressed oils, unpolished grains, organic spices and traditional Indian foods. Sourced directly from farmers across India. Free shipping above Rs999."
+      description="Buy 100% pure cold-pressed oils, unpolished grains, organic spices and traditional Indian foods. Sourced directly from farmers across India."
       canonical="/"
       schema={homeSchema}
     />
@@ -216,7 +206,7 @@ const HomePage = () => {
             />
           </div>
         ))}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#1A2F0D]/95 via-[#1A2F0D]/80 to-[#1A2F0D]/40 md:to-[#1A2F0D]/30"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#FBF7EF]/92 via-[#FBF7EF]/70 to-[#FBF7EF]/12 md:to-transparent"></div>
 
         {/* Slide dots */}
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
@@ -233,22 +223,24 @@ const HomePage = () => {
         {/* Content */}
         <div className="container-krishi relative z-10 py-12 md:py-20">
           <div className="max-w-2xl">
-            <span className="label-accent animate-fade-in-up">100% Pure & Natural</span>
-            <h1 className="heading-h1 text-[#F5EDD6] mt-4 mb-4 md:mb-6 animate-fade-in-up animation-delay-100">
-              {cmsHeroTitle.split('\n').map((line, idx) => (
-                <React.Fragment key={idx}>{line}{idx < cmsHeroTitle.split('\n').length - 1 ? <br /> : null}</React.Fragment>
-              ))}
-            </h1>
-            <p className="text-base md:text-lg text-[#F5EDD6]/80 mb-6 md:mb-8 animate-fade-in-up animation-delay-200">
-              {getText('hero_subtitle', 'Traditional stone & wood-pressed oils from Indian farms. No heat, no chemicals - just pure goodness the way nature intended.')}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 md:gap-4 animate-fade-in-up animation-delay-300">
-              <Link to="/collections/cold-pressed-oils" className="btn-accent" data-testid="hero-shop-now">
-                Shop Now <ArrowRight className="ml-2" size={18} />
-              </Link>
-              <Link to="/bundle" className="btn-secondary border-[#F5EDD6] text-[#F5EDD6] hover:bg-[#F5EDD6] hover:text-[#2D5016]" data-testid="hero-build-combo">
-                Build Your Combo
-              </Link>
+            <div className="inline-block max-w-xl rounded-[2rem] bg-white/68 px-6 py-7 shadow-[0_18px_60px_rgba(55,43,25,0.12)] backdrop-blur-sm md:px-8 md:py-9">
+              <span className="label-accent animate-fade-in-up">Traditional Extraction</span>
+              <h1 className="mt-4 mb-4 text-4xl font-bold leading-tight text-[#3A2A19] md:mb-6 md:text-6xl" style={{ fontFamily: 'Playfair Display, serif' }}>
+                {heroTitleLines.map((line, idx) => (
+                  <React.Fragment key={idx}>{line}{idx < heroTitleLines.length - 1 ? <br /> : null}</React.Fragment>
+                ))}
+              </h1>
+              <p className="text-base md:text-lg text-[#5F5144] mb-6 md:mb-8 animate-fade-in-up animation-delay-200">
+                Traditional cold-pressed oils crafted slowly for clean flavor, natural aroma, and everyday cooking.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 md:gap-4 animate-fade-in-up animation-delay-300">
+                <Link to="/collections/cold-pressed-oils" className="btn-accent" data-testid="hero-shop-now">
+                  Shop Now <ArrowRight className="ml-2" size={18} />
+                </Link>
+                <Link to="/pages/oil" className="btn-secondary border-[#3A2A19] text-[#3A2A19] hover:bg-[#3A2A19] hover:text-white" data-testid="hero-build-combo">
+                  Learn More
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -389,26 +381,6 @@ const HomePage = () => {
                 </tbody>
               </table>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Subscribe & Save Banner */}
-      <section className="bg-[#2D5016] py-16 md:py-24" data-testid="subscribe-banner">
-        <div className="container-krishi">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-            <div className="text-center md:text-left">
-              <span className="text-xs uppercase tracking-[0.2em] font-medium text-[#C8602B]">Never Run Out</span>
-              <h2 className="text-3xl md:text-4xl font-bold text-white mt-2 mb-4" style={{ fontFamily: 'Playfair Display, serif' }}>
-                Subscribe & Save 10%
-              </h2>
-              <p className="text-[#F5EDD6]/80 max-w-md">
-                Set up monthly deliveries and save 10% on every order. Pause, skip, or cancel anytime.
-              </p>
-            </div>
-            <Link to="/collections/cold-pressed-oils" className="btn-accent" data-testid="subscribe-cta">
-              Start Subscribing <ArrowRight className="ml-2" size={18} />
-            </Link>
           </div>
         </div>
       </section>

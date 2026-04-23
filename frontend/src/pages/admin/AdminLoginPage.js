@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'sonner';
-import { Eye, EyeOff, Lock } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 
 const AdminLoginPage = () => {
   const [email, setEmail] = useState('');
@@ -39,9 +39,7 @@ const AdminLoginPage = () => {
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-14 h-14 bg-[#2D5016] rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <Lock size={24} className="text-white" />
-          </div>
+          <img src="/images/branding/krishi-logo.png" alt="Krishi" className="h-16 w-auto mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-[#1A2F0D]" style={{ fontFamily: 'Playfair Display, serif' }}>
             Admin CMS
           </h1>

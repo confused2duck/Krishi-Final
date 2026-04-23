@@ -9,8 +9,6 @@ import { Toaster } from "./components/ui/sonner";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import WhatsAppButton from "./components/WhatsAppButton";
-import FirstOrderPopup from "./components/FirstOrderPopup";
-import ExitIntentPopup from "./components/ExitIntentPopup";
 
 // Pages
 import HomePage from "./pages/HomePage";
@@ -81,8 +79,6 @@ const MainLayout = ({ children }) => (
     <main>{children}</main>
     <Footer />
     <WhatsAppButton />
-    <FirstOrderPopup />
-    <ExitIntentPopup />
   </>
 );
 

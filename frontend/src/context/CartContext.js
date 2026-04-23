@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from './AuthContext';
+import { calculateOilOfferDiscount } from '../lib/utils';
 
 const API = process.env.REACT_APP_BACKEND_URL || "";
 
@@ -58,7 +59,7 @@ export const CartProvider = ({ children }) => {
         const newCart = {
           items: newItems,
           subtotal: newItems.reduce((sum, i) => sum + (i.price || 0) * i.quantity, 0),
-          discount: newItems.length >= 3 ? 60 : newItems.length >= 2 ? 30 : 0,
+          discount: calculateOilOfferDiscount(newItems),
           total: 0
         };
         newCart.total = newCart.subtotal - newCart.discount;
@@ -83,7 +84,7 @@ export const CartProvider = ({ children }) => {
         const newCart = {
           items,
           subtotal: items.reduce((sum, i) => sum + (i.price || 0) * i.quantity, 0),
-          discount: items.length >= 3 ? 60 : items.length >= 2 ? 30 : 0,
+          discount: calculateOilOfferDiscount(items),
           total: 0
         };
         newCart.total = newCart.subtotal - newCart.discount;
