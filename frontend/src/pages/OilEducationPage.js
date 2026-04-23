@@ -8,15 +8,40 @@ import { usePageImages, usePageVideos } from '../hooks/usePageMedia';
 const OilEducationPage = () => {
   const { images: oilImages, imgUrl: oilImgUrl } = usePageImages('oil');
   const { videos: oilVideos, vidUrl: oilVidUrl } = usePageVideos('oil');
+  const normalizeKey = (value = '') => value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
   const oils = [
-    { name: 'Groundnut Oil', benefits: ['High smoke point', 'Heart-healthy fats', 'Rich in Vitamin E'], uses: 'Deep frying, everyday cooking', image: '/images/products/groundnut-oil-page.png' },
-    { name: 'Coconut Oil', benefits: ['Boosts immunity', 'Natural moisturizer', 'Antimicrobial'], uses: 'South Indian cooking, baking, hair care', image: '/images/products/coconut-oil-page.png' },
-    { name: 'Gingelly (Sesame) Oil', benefits: ['Rich in antioxidants', 'Skin nourishing', 'Traditional flavor'], uses: 'Tempering, pickles, massage', image: '/images/products/gingelly-oil-page.png' },
-    { name: 'Mustard Oil', benefits: ['Antibacterial', 'Improves digestion', 'Natural preservative'], uses: 'Bengali & North Indian cooking, pickles', image: '/images/products/mustard-oil-page.png' },
-    { name: 'Flaxseed Oil', benefits: ['Highest Omega-3', 'Anti-inflammatory', 'Brain health'], uses: 'Salad dressings, smoothies (not for cooking)', image: '/images/products/flaxseed-oil-page.png' },
-    { name: 'Sunflower Oil', benefits: ['Light texture', 'High in Vitamin E', 'Good for heart'], uses: 'Light cooking, baking', image: '/images/products/sunflower-oil-page.png' },
+    { name: 'Groundnut Oil', section: 'groundnut-oil', benefits: ['High smoke point', 'Heart-healthy fats', 'Rich in Vitamin E'], uses: 'Deep frying, everyday cooking', image: '/images/products/groundnut-oil-page.png' },
+    { name: 'Coconut Oil', section: 'coconut-oil', benefits: ['Boosts immunity', 'Natural moisturizer', 'Antimicrobial'], uses: 'South Indian cooking, baking, hair care', image: '/images/products/coconut-oil-page.png' },
+    { name: 'Gingelly (Sesame) Oil', section: 'gingelly-oil', benefits: ['Rich in antioxidants', 'Skin nourishing', 'Traditional flavor'], uses: 'Tempering, pickles, massage', image: '/images/products/gingelly-oil-page.png' },
+    { name: 'Mustard Oil', section: 'mustard-oil', benefits: ['Antibacterial', 'Improves digestion', 'Natural preservative'], uses: 'Bengali & North Indian cooking, pickles', image: '/images/products/mustard-oil-page.png' },
+    { name: 'Flaxseed Oil', section: 'flaxseed-oil', benefits: ['Highest Omega-3', 'Anti-inflammatory', 'Brain health'], uses: 'Salad dressings, smoothies (not for cooking)', image: '/images/products/flaxseed-oil-page.png' },
+    { name: 'Sunflower Oil', section: 'sunflower-oil', benefits: ['Light texture', 'High in Vitamin E', 'Good for heart'], uses: 'Light cooking, baking', image: '/images/products/sunflower-oil-page.png' },
   ];
+
+  const bannerImage = oilImages.find((img) => ['banner', 'hero', 'hero-main'].includes(normalizeKey(img.section || img.name))) || oilImages[0];
+  const oilsWithImages = oils.map((oil) => {
+    const backendImage = oilImages.find((img) => {
+      const sectionKey = normalizeKey(img.section);
+      const nameKey = normalizeKey(img.name);
+      return (
+        sectionKey === oil.section ||
+        nameKey.includes(oil.section) ||
+        (oil.section === 'gingelly-oil' && (sectionKey === 'sesame-oil' || nameKey.includes('sesame-oil')))
+      );
+    });
+
+    return {
+      ...oil,
+      image: backendImage ? oilImgUrl(backendImage.id) : oil.image,
+      backendImageId: backendImage?.id || null,
+    };
+  });
+  const usedImageIds = new Set([
+    ...(bannerImage ? [bannerImage.id] : []),
+    ...oilsWithImages.map((oil) => oil.backendImageId).filter(Boolean),
+  ]);
+  const galleryImages = oilImages.filter((img) => !usedImageIds.has(img.id));
 
   const faqs = [
     {
@@ -74,12 +99,12 @@ const OilEducationPage = () => {
     />
     <div className="bg-[#F5EDD6]" data-testid="oil-education-page">
       {/* CMS Oil Banner */}
-      {(oilImages.length > 0 || oilVideos.length > 0) && (
+      {(bannerImage || oilVideos.length > 0) && (
         <section className="relative h-64 md:h-80 overflow-hidden">
           {oilVideos.length > 0 ? (
             <video src={oilVidUrl(oilVideos[0].id)} autoPlay muted loop playsInline className="w-full h-full object-cover" />
           ) : (
-            <img src={oilImgUrl(oilImages[0].id)} alt="Oil Education" className="w-full h-full object-cover" />
+            <img src={oilImgUrl(bannerImage.id)} alt="Oil Education" className="w-full h-full object-cover" />
           )}
           <div className="absolute inset-0 bg-[#1A2F0D]/60 flex items-center justify-center">
             <h1 className="text-4xl font-bold text-white text-center px-4" style={{ fontFamily: 'Playfair Display, serif' }}>The Science of Cold Pressing</h1>
@@ -184,7 +209,7 @@ const OilEducationPage = () => {
           </div>
           
           <div className="grid md:grid-cols-3 gap-6">
-            {oils.map((oil, idx) => (
+            {oilsWithImages.map((oil, idx) => (
               <div key={idx} className="card-krishi">
                 <div className="aspect-video rounded-xl overflow-hidden mb-4">
                   <img 
@@ -244,7 +269,7 @@ const OilEducationPage = () => {
       </section>
 
       {/* CMS Oil Gallery */}
-      {oilImages.length > 1 && (
+      {galleryImages.length > 0 && (
         <section className="section-padding bg-white">
           <div className="container-krishi">
             <div className="text-center mb-8">
@@ -252,7 +277,7 @@ const OilEducationPage = () => {
               <h2 className="heading-h2 mt-2">Cold Pressing In Action</h2>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {oilImages.slice(1).map(img => (
+              {galleryImages.map(img => (
                 <div key={img.id} className="aspect-video rounded-2xl overflow-hidden">
                   <img src={oilImgUrl(img.id)} alt={img.name} className="w-full h-full object-cover" loading="lazy" />
                 </div>
