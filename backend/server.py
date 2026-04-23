@@ -2143,14 +2143,14 @@ PRODUCTS_SEED = [
 
 # Collections Data
 COLLECTIONS = [
-    {"name": "Cold Pressed Oils", "slug": "cold-pressed-oils", "description": "Pure, chemical-free oils extracted using traditional wooden press", "image": "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500"},
-    {"name": "Traditional Rices", "slug": "traditional-rices", "description": "Heritage rice varieties from across India", "image": "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=500"},
-    {"name": "Unpolished Millets", "slug": "unpolished-millets", "description": "Nutrient-rich ancient grains for modern health", "image": "https://images.unsplash.com/photo-1676619357571-b4f086f81299?w=500"},
-    {"name": "Spices & Pulses", "slug": "spices", "description": "Farm-fresh spices ground to perfection, and whole unpolished pulses", "image": "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=500"},
-    {"name": "Ghee & Honey", "slug": "ghee-honey", "description": "Traditional A2 ghee and raw forest honey", "image": "https://images.unsplash.com/photo-1631397833941-1e1b7b358c07?w=500"},
-    {"name": "Jaggery & Rock Salt", "slug": "jaggery-rocksalt", "description": "Natural sweeteners and mineral-rich salts", "image": "https://images.unsplash.com/photo-1604431696980-07e518647bec?w=500"},
-    {"name": "Chikkis", "slug": "chikkis", "description": "Traditional jaggery-based energy bars", "image": "https://images.unsplash.com/photo-1604431696980-07e518647bec?w=500"},
-    {"name": "Others", "slug": "others", "description": "Seeds, powders, and other natural wellness products", "image": "https://images.unsplash.com/photo-1563203369-26f2e4a5ccf7?w=500"},
+    {"name": "Cold Pressed Oils", "slug": "cold-pressed-oils", "description": "Pure, chemical-free oils extracted using traditional wooden press", "image": "/images/products/groundnut-oil-main.jpeg"},
+    {"name": "Traditional Rices", "slug": "traditional-rices", "description": "Heritage rice varieties from across India", "image": "/images/products/rajmudi-rice-main.png"},
+    {"name": "Unpolished Millets", "slug": "unpolished-millets", "description": "Nutrient-rich ancient grains for modern health", "image": "/images/products/navane-foxtail-millet-main.png"},
+    {"name": "Spices & Pulses", "slug": "spices", "description": "Farm-fresh spices ground to perfection, and whole unpolished pulses", "image": "/images/products/turmeric-powder-main.png"},
+    {"name": "Ghee & Honey", "slug": "ghee-honey", "description": "Traditional A2 ghee and raw forest honey", "image": "/images/products/a2-ghee-main.webp"},
+    {"name": "Jaggery & Rock Salt", "slug": "jaggery-rocksalt", "description": "Natural sweeteners and mineral-rich salts", "image": "/images/products/organic-jaggery-main.jpeg"},
+    {"name": "Chikkis", "slug": "chikkis", "description": "Traditional jaggery-based energy bars", "image": "/images/products/groundnut-chikki-main.png"},
+    {"name": "Others", "slug": "others", "description": "Seeds, powders, and other natural wellness products", "image": "/images/products/chia-seeds-main.png"},
 ]
 
 REMOVED_COLLECTION_SLUGS = {"unpolished-pulses", "shikakai", "wheat", "frontpage"}
@@ -2395,19 +2395,77 @@ async def seed_products():
         logger.info(f"Products upserted: {result.upserted_count} new, {result.modified_count} updated")
 
 
-CURATED_PRODUCT_IMAGE_OVERRIDES = {
-    "oodalu-barnyard-millet": ["https://images.unsplash.com/photo-1634141510639-d691d86f47be?w=1200"],
-    "chia-seeds": ["https://images.unsplash.com/photo-1571197119738-26123cb7f36a?w=1200"],
-    "coco-chikki": ["https://images.unsplash.com/photo-1603046891744-7617c8f0f9c7?w=1200"],
-    "jeera-samba-rice": ["https://images.unsplash.com/photo-1586201375761-83865001e31c?w=1200"],
-    "mustard-oil": ["https://images.unsplash.com/photo-1621947081720-86970823b77a?w=1200"],
-    "neem-oil": ["https://images.unsplash.com/photo-1615485925873-99e20bd76f16?w=1200"],
-    "niger-seed-oil": ["https://images.unsplash.com/photo-1599707367072-cd6ada2bc375?w=1200"],
-    "quinoa": ["https://images.unsplash.com/photo-1614961233913-a5113a4a34ed?w=1200"],
-    "safflower-oil": ["https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?w=1200"],
-    "sambhar-powder": ["https://images.unsplash.com/photo-1512058564366-18510be2db19?w=1200"],
-    "vaangi-bath-powder": ["https://images.unsplash.com/photo-1576086213369-97a306d36557?w=1200"],
-    "wildforest-honey": ["https://images.unsplash.com/photo-1587049016823-ae4f90d0a9d2?w=1200"],
+PRODUCT_IMAGE_ASSET_MAP = {
+    "groundnut-oil": ["/images/products/groundnut-oil-main.jpeg"],
+    "coconut-oil": ["/images/products/coconut-oil-main.jpeg"],
+    "sunflower-oil": ["/images/products/sunflower-oil-main.jpeg"],
+    "deepam-oil": ["/images/products/deepam-oil-main.jpeg"],
+    "castor-oil": ["/images/products/castor-oil-main.jpeg"],
+    "gingelly-oil": ["/images/products/gingelly-oil-main.jpeg"],
+    "safflower-oil": ["/images/products/safflower-oil-main.jpeg"],
+    "neem-oil": ["/images/products/neem-oil-main.jpeg"],
+    "hippe-oil": ["/images/products/hippe-oil-main.jpeg"],
+    "almond-oil": ["/images/products/almond-oil-main.jpeg"],
+    "virgin-coconut-oil": ["/images/products/virgin-coconut-oil-main.jpeg"],
+    "mustard-oil": ["/images/products/mustard-oil-main.jpeg"],
+    "flaxseed-oil": ["/images/products/flaxseed-oil-main.jpeg"],
+    "niger-seed-oil": ["/images/products/niger-seed-oil-main.jpeg"],
+    "pongomia-oil": ["/images/products/pongomia-oil-main.jpeg"],
+    "desi-ghee": ["/images/products/desi-ghee-main.webp"],
+    "a2-ghee": ["/images/products/a2-ghee-main.webp"],
+    "mountain-honey": ["/images/products/mountain-honey-main.webp"],
+    "wildforest-honey": ["/images/products/wildforest-honey-main.webp"],
+    "moringa-honey": ["/images/products/moringa-honey-main.jpeg"],
+    "bamboo-rice": ["/images/products/bamboo-rice-main.png"],
+    "brown-rice": ["/images/products/brown-rice-main.png"],
+    "red-rice": ["/images/products/red-rice-main.png"],
+    "black-rice": ["/images/products/black-rice-main.png"],
+    "jeera-samba-rice": ["/images/products/jeera-samba-rice-main.png"],
+    "rajmudi-rice": ["/images/products/rajmudi-rice-main.png"],
+    "sanmadhu-rice": ["/images/products/sanmadhu-rice-main.png"],
+    "sona-masuri-rice": ["/images/products/sona-masuri-rice-main.png"],
+    "saame-little-millet": ["/images/products/saame-little-millet-main.png"],
+    "korale-browntop-millet": ["/images/products/korale-browntop-millet-main.png"],
+    "navane-foxtail-millet": ["/images/products/navane-foxtail-millet-main.png"],
+    "aarka-kodo-millet": ["/images/products/aarka-kodo-millet-main.png"],
+    "oodalu-barnyard-millet": ["/images/products/oodalu-barnyard-millet-main.png"],
+    "quinoa": ["/images/products/quinoa-main.png"],
+    "organic-jaggery": ["/images/products/organic-jaggery-main.jpeg"],
+    "jaggery-powder": ["/images/products/jaggery-powder-main.jpg"],
+    "palm-jaggery": ["/images/products/palm-jaggery-main.jpeg"],
+    "bucket-jaggery": ["/images/products/bucket-jaggery-main.jpeg"],
+    "rock-salt-crystal": ["/images/products/rock-salt-crystal-main.jpeg"],
+    "rock-salt-powder": ["/images/products/rock-salt-powder-main.webp"],
+    "organic-jaggery-round": ["/images/products/organic-jaggery-round-main.jpg"],
+    "turmeric-powder": ["/images/products/turmeric-powder-main.png"],
+    "chilli-powder": ["/images/products/chilli-powder-main.png"],
+    "coriander-powder": ["/images/products/coriander-powder-main.png"],
+    "jeera-powder": ["/images/products/jeera-powder-main.png"],
+    "puliogare-powder": ["/images/products/puliogare-powder-main.png"],
+    "bisibelebath-powder": ["/images/products/bisibelebath-powder-main.png"],
+    "rasam-powder": ["/images/products/rasam-powder-main.png"],
+    "groundnut-chutney-powder": ["/images/products/groundnut-chutney-powder-main.png"],
+    "nigerseed-powder": ["/images/products/nigerseed-powder-main.png"],
+    "toor-dal": ["/images/products/toor-dal-main.png"],
+    "channa-dal": ["/images/products/channa-dal-main.png"],
+    "moong-dal": ["/images/products/moong-dal-main.png"],
+    "urid-dal": ["/images/products/urid-dal-main.png"],
+    "fried-gram": ["/images/products/fried-gram-main.png"],
+    "black-urid-dal": ["/images/products/black-urid-dal-main.png"],
+    "black-channa-dal": ["/images/products/black-channa-dal-main.png"],
+    "green-gram": ["/images/products/green-gram-main.png"],
+    "groundnut-chikki": ["/images/products/groundnut-chikki-main.png"],
+    "sesame-chikki": ["/images/products/sesame-chikki-main.png"],
+    "coco-chikki": ["/images/products/coco-chikki-main.png"],
+    "shikakai-powder": ["/images/products/shikakai-powder-main.png"],
+    "jaave-godhi-wheat": ["/images/products/jaave-godhi-wheat-main.png"],
+    "emmer-wheat-powder": ["/images/products/emmer-wheat-powder-main.png"],
+    "moringa-powder": ["/images/products/moringa-powder-main.png"],
+    "amla-powder": ["/images/products/amla-powder-main.png"],
+    "chia-seeds": ["/images/products/chia-seeds-main.png"],
+    "pumpkin-seeds": ["/images/products/pumpkin-seeds-main.png"],
+    "sunflower-seeds": ["/images/products/sunflower-seeds-main.png"],
+    "flax-seeds": ["/images/products/flax-seeds-main.png"],
 }
 
 
@@ -2416,7 +2474,7 @@ def build_seed_product(product: dict) -> dict:
     p["collection"] = normalize_collection_slug(p.get("collection"))
     p["sizes"] = _get_sizes(p)
     p["tags"] = p.get("tags", [])
-    p["images"] = CURATED_PRODUCT_IMAGE_OVERRIDES.get(p["slug"], p.get("images", []))
+    p["images"] = PRODUCT_IMAGE_ASSET_MAP.get(p["slug"], p.get("images", []))
     return p
 
 
