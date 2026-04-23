@@ -2318,12 +2318,12 @@ async def lifespan(app: FastAPI):
         await seed_admin()
         await sync_default_logo()
         await seed_products()
+        await sync_seeded_products()
         await seed_collections()
         await sync_curated_collection_metadata()
         await prune_removed_collections()
         await seed_blog_posts()
         await seed_cms_pages()
-        await sync_curated_product_images()
         await write_test_credentials()
         logger.info("Database seeded successfully")
     except Exception as e:
@@ -2385,9 +2385,7 @@ async def seed_products():
     from pymongo import UpdateOne
     ops = []
     for product in PRODUCTS_SEED:
-        p = dict(product)
-        p["sizes"] = _get_sizes(product)
-        p.setdefault("tags", [])
+        p = build_seed_product(product)
         p.setdefault("created_at", datetime.now(timezone.utc))
         # Do not overwrite admin-edited products on every startup.
         # Seed acts as "create missing only".
@@ -2395,6 +2393,58 @@ async def seed_products():
     if ops:
         result = await db.products.bulk_write(ops)
         logger.info(f"Products upserted: {result.upserted_count} new, {result.modified_count} updated")
+
+
+CURATED_PRODUCT_IMAGE_OVERRIDES = {
+    "oodalu-barnyard-millet": ["https://images.unsplash.com/photo-1634141510639-d691d86f47be?w=1200"],
+    "chia-seeds": ["https://images.unsplash.com/photo-1571197119738-26123cb7f36a?w=1200"],
+    "coco-chikki": ["https://images.unsplash.com/photo-1603046891744-7617c8f0f9c7?w=1200"],
+    "jeera-samba-rice": ["https://images.unsplash.com/photo-1586201375761-83865001e31c?w=1200"],
+    "mustard-oil": ["https://images.unsplash.com/photo-1621947081720-86970823b77a?w=1200"],
+    "neem-oil": ["https://images.unsplash.com/photo-1615485925873-99e20bd76f16?w=1200"],
+    "niger-seed-oil": ["https://images.unsplash.com/photo-1599707367072-cd6ada2bc375?w=1200"],
+    "quinoa": ["https://images.unsplash.com/photo-1614961233913-a5113a4a34ed?w=1200"],
+    "safflower-oil": ["https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?w=1200"],
+    "sambhar-powder": ["https://images.unsplash.com/photo-1512058564366-18510be2db19?w=1200"],
+    "vaangi-bath-powder": ["https://images.unsplash.com/photo-1576086213369-97a306d36557?w=1200"],
+    "wildforest-honey": ["https://images.unsplash.com/photo-1587049016823-ae4f90d0a9d2?w=1200"],
+}
+
+
+def build_seed_product(product: dict) -> dict:
+    p = dict(product)
+    p["collection"] = normalize_collection_slug(p.get("collection"))
+    p["sizes"] = _get_sizes(p)
+    p["tags"] = p.get("tags", [])
+    p["images"] = CURATED_PRODUCT_IMAGE_OVERRIDES.get(p["slug"], p.get("images", []))
+    return p
+
+
+async def sync_seeded_products():
+    """
+    Force-update seeded product records in DB so backend code changes reliably
+    reach the storefront for existing products as well as new inserts.
+    """
+    from pymongo import UpdateOne
+
+    now = datetime.now(timezone.utc)
+    ops = []
+    for product in PRODUCTS_SEED:
+        payload = build_seed_product(product)
+        payload["updated_at"] = now
+        payload.pop("created_at", None)
+        ops.append(
+            UpdateOne(
+                {"slug": payload["slug"]},
+                {"$set": payload, "$setOnInsert": {"created_at": now}},
+                upsert=True,
+            )
+        )
+    if ops:
+        result = await db.products.bulk_write(ops)
+        logger.info(
+            f"Seeded products synced: {result.upserted_count} inserted, {result.modified_count} updated"
+        )
 
 
 async def seed_collections():
@@ -2500,26 +2550,7 @@ async def sync_curated_product_images():
     Force-update curated product images in DB so CMS/storefront reflects the
     latest approved visuals even when product seeding is create-only.
     """
-    curated = {
-        "oodalu-barnyard-millet": ["https://images.unsplash.com/photo-1634141510639-d691d86f47be?w=1200"],
-        "chia-seeds": ["https://images.unsplash.com/photo-1571197119738-26123cb7f36a?w=1200"],
-        "coco-chikki": ["https://images.unsplash.com/photo-1603046891744-7617c8f0f9c7?w=1200"],
-        "jeera-samba-rice": ["https://images.unsplash.com/photo-1586201375761-83865001e31c?w=1200"],
-        "mustard-oil": ["https://images.unsplash.com/photo-1621947081720-86970823b77a?w=1200"],
-        "neem-oil": ["https://images.unsplash.com/photo-1615485925873-99e20bd76f16?w=1200"],
-        "niger-seed-oil": ["https://images.unsplash.com/photo-1599707367072-cd6ada2bc375?w=1200"],
-        "quinoa": ["https://images.unsplash.com/photo-1614961233913-a5113a4a34ed?w=1200"],
-        "safflower-oil": ["https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?w=1200"],
-        "sambhar-powder": ["https://images.unsplash.com/photo-1512058564366-18510be2db19?w=1200"],
-        "vaangi-bath-powder": ["https://images.unsplash.com/photo-1576086213369-97a306d36557?w=1200"],
-        "wildforest-honey": ["https://images.unsplash.com/photo-1587049016823-ae4f90d0a9d2?w=1200"],
-    }
-    updated = 0
-    for slug, images in curated.items():
-        result = await db.products.update_one({"slug": slug}, {"$set": {"images": images, "updated_at": datetime.now(timezone.utc)}})
-        if result.matched_count:
-            updated += 1
-    logger.info(f"Curated product images synced: {updated}/{len(curated)}")
+    await sync_seeded_products()
 
 
 async def write_test_credentials():
@@ -3469,12 +3500,12 @@ async def run_seed(token: str):
         await seed_admin()
         await sync_default_logo()
         await seed_products()
+        await sync_seeded_products()
         await seed_collections()
         await sync_curated_collection_metadata()
         await prune_removed_collections()
         await seed_blog_posts()
         await seed_cms_pages()
-        await sync_curated_product_images()
         return {"status": "seeded", "timestamp": datetime.now(timezone.utc).isoformat()}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
