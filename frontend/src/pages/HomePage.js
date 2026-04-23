@@ -182,22 +182,25 @@ const HomePage = () => {
             height="1080"
           />
 
-          <div className="absolute bottom-[5.5%] left-1/2 w-[58%] -translate-x-[2%] px-3 sm:px-4 md:bottom-[6%] md:left-[54%] md:w-[46%] md:-translate-x-0 md:px-0">
-            <div className="flex flex-col items-center gap-3 md:items-start">
-              <p className="max-w-[560px] text-center text-[0.95rem] font-semibold leading-tight text-[#9A8C81] sm:text-[1.05rem] md:text-left md:text-[1.55rem]">
+          <div className="absolute bottom-[9%] left-[53%] w-[38%] px-3 sm:bottom-[8%] sm:w-[40%] sm:px-0 md:bottom-[8.5%] md:left-[52%] md:w-[36%]">
+            <div className="flex flex-col items-start gap-3">
+              <p
+                className="max-w-[520px] text-left text-[0.95rem] font-semibold leading-[1.08] tracking-[-0.03em] text-[#8E8074] sm:text-[1.05rem] md:text-[1.38rem] lg:text-[1.55rem]"
+                style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}
+              >
                 {FREE_SHIPPING_MESSAGE}
               </p>
-              <div className="flex flex-wrap justify-center gap-2.5 md:justify-start">
+              <div className="flex flex-wrap gap-2.5">
                 <Link
                   to="/collections/cold-pressed-oils"
-                  className="inline-flex min-w-[118px] items-center justify-center rounded-full bg-[#C9682A] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_10px_20px_rgba(201,104,42,0.22)] transition-colors hover:bg-[#b95c23]"
+                  className="inline-flex min-w-[108px] items-center justify-center rounded-full bg-[#C9682A] px-4 py-2 text-[0.92rem] font-semibold text-white shadow-[0_8px_18px_rgba(201,104,42,0.18)] transition-colors hover:bg-[#b95c23]"
                   data-testid="hero-shop-now"
                 >
                   Shop Now
                 </Link>
                 <Link
                   to="/pages/oil"
-                  className="inline-flex min-w-[118px] items-center justify-center rounded-full border border-[#A59688] bg-white/82 px-5 py-2.5 text-sm font-semibold text-[#8E8176] transition-colors hover:bg-[#8E8176] hover:text-white"
+                  className="inline-flex min-w-[108px] items-center justify-center rounded-full border border-[#A59688] bg-white/70 px-4 py-2 text-[0.92rem] font-semibold text-[#8E8176] transition-colors hover:bg-[#8E8176] hover:text-white"
                   data-testid="hero-learn-more"
                 >
                   Learn More
