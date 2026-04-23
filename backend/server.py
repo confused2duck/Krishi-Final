@@ -2319,6 +2319,7 @@ async def lifespan(app: FastAPI):
         await sync_default_logo()
         await seed_products()
         await seed_collections()
+        await sync_curated_collection_metadata()
         await prune_removed_collections()
         await seed_blog_posts()
         await seed_cms_pages()
@@ -2406,6 +2407,30 @@ async def seed_collections():
     if ops:
         await db.collections.bulk_write(ops)
         logger.info("Collections upserted")
+
+
+async def sync_curated_collection_metadata():
+    """
+    Force-update collection metadata in DB so storefront collection pages reflect
+    the latest approved backend records even when collection seeding is create-only.
+    """
+    updated = 0
+    now = datetime.now(timezone.utc)
+    for col in COLLECTIONS:
+        result = await db.collections.update_one(
+            {"slug": col["slug"]},
+            {
+                "$set": {
+                    "name": col["name"],
+                    "description": col["description"],
+                    "image": col["image"],
+                    "updated_at": now,
+                }
+            },
+        )
+        if result.matched_count:
+            updated += 1
+    logger.info(f"Curated collection metadata synced: {updated}/{len(COLLECTIONS)}")
 
 async def prune_removed_collections():
     """
@@ -3445,6 +3470,7 @@ async def run_seed(token: str):
         await sync_default_logo()
         await seed_products()
         await seed_collections()
+        await sync_curated_collection_metadata()
         await prune_removed_collections()
         await seed_blog_posts()
         await seed_cms_pages()
