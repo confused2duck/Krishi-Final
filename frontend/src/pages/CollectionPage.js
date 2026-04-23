@@ -170,6 +170,7 @@ const CollectionPage = () => {
   const collectionTitle = collection?.name || 'All Products';
   const collectionDesc = collection?.description || `Shop all Krishi Foods products - pure cold-pressed oils, traditional grains, spices and more. Free shipping above Rs999.`;
   const collectionSlug = slug || 'all';
+  const collectionImage = resolveMediaUrl(collection?.image, API);
 
   const collectionSchema = {
     "@context": "https://schema.org",
@@ -197,8 +198,18 @@ const CollectionPage = () => {
     />
     <div className="bg-[#F5EDD6] min-h-screen" data-testid="collection-page">
       {/* Header */}
-      <div className="bg-[#2D5016] py-12 md:py-16">
-        <div className="container-krishi">
+      <div className="relative bg-[#2D5016] py-12 md:py-16 overflow-hidden">
+        {collectionImage && slug !== 'all' && (
+          <div className="absolute inset-0">
+            <img
+              src={collectionImage}
+              alt={collectionTitle}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-[#1A2F0D]/65" />
+          </div>
+        )}
+        <div className="container-krishi relative z-10">
           <nav className="text-[#F5EDD6]/60 text-sm mb-4">
             <Link to="/" className="hover:text-[#F5EDD6]">Home</Link>
             <span className="mx-2">/</span>
