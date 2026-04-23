@@ -12,7 +12,7 @@ const API = process.env.REACT_APP_BACKEND_URL || "";
 
 const heroSlides = [
   {
-    image: '/images/hero/oil-hero-banner-final-v3.png',
+    image: '/images/hero/oil-hero-banner-final-v4.png',
     alt: 'Krishi homepage hero banner',
   },
 ];
@@ -182,30 +182,30 @@ const HomePage = () => {
             height="1080"
           />
 
-          <div className="absolute bottom-[9%] left-[53%] w-[38%] px-3 sm:bottom-[8%] sm:w-[40%] sm:px-0 md:bottom-[8.5%] md:left-[52%] md:w-[36%]">
-            <div className="flex flex-col items-start gap-3">
-              <p
-                className="max-w-[520px] text-left text-[0.95rem] font-semibold leading-[1.08] tracking-[-0.03em] text-[#8E8074] sm:text-[1.05rem] md:text-[1.38rem] lg:text-[1.55rem]"
-                style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}
-              >
-                {FREE_SHIPPING_MESSAGE}
-              </p>
-              <div className="flex flex-wrap gap-2.5">
+          <div className="absolute inset-x-0 bottom-0">
+            <div className="flex min-h-[72px] flex-col items-start justify-center gap-3 px-4 py-3 sm:min-h-[88px] sm:px-6 md:min-h-[108px] md:flex-row md:items-center md:justify-between md:gap-4 md:px-10 lg:min-h-[124px] lg:px-14">
+              <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
                 <Link
                   to="/collections/cold-pressed-oils"
-                  className="inline-flex min-w-[108px] items-center justify-center rounded-full bg-[#C9682A] px-4 py-2 text-[0.92rem] font-semibold text-white shadow-[0_8px_18px_rgba(201,104,42,0.18)] transition-colors hover:bg-[#b95c23]"
+                  className="inline-flex min-w-[108px] items-center justify-center rounded-full bg-[#C9682A] px-4 py-2 text-[0.88rem] font-semibold text-white shadow-[0_8px_18px_rgba(201,104,42,0.22)] transition-colors hover:bg-[#b95c23] sm:min-w-[120px] sm:px-5 sm:text-[0.92rem]"
                   data-testid="hero-shop-now"
                 >
                   Shop Now
                 </Link>
                 <Link
                   to="/pages/oil"
-                  className="inline-flex min-w-[108px] items-center justify-center rounded-full border border-[#A59688] bg-white/70 px-4 py-2 text-[0.92rem] font-semibold text-[#8E8176] transition-colors hover:bg-[#8E8176] hover:text-white"
+                  className="inline-flex min-w-[108px] items-center justify-center rounded-full border border-white/45 bg-white/12 px-4 py-2 text-[0.88rem] font-semibold text-white backdrop-blur-[1px] transition-colors hover:bg-white hover:text-[#1C1B18] sm:min-w-[120px] sm:px-5 sm:text-[0.92rem]"
                   data-testid="hero-learn-more"
                 >
-                  Learn More
+                  Know More
                 </Link>
               </div>
+              <p
+                className="max-w-[290px] text-left text-[0.8rem] font-semibold leading-tight tracking-[-0.02em] text-white sm:max-w-[360px] sm:text-[0.95rem] md:max-w-[460px] md:text-right md:text-[1.2rem] lg:max-w-[540px] lg:text-[1.45rem]"
+                style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}
+              >
+                {FREE_SHIPPING_MESSAGE}
+              </p>
             </div>
           </div>
         </div>

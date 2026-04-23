@@ -22,7 +22,7 @@ export function resolveMediaUrl(src, apiBase = process.env.REACT_APP_BACKEND_URL
 }
 
 export const FREE_SHIPPING_THRESHOLD = 2000;
-export const FREE_SHIPPING_MESSAGE = "Free shipping on orders above ₹2000 within 10 km";
+export const FREE_SHIPPING_MESSAGE = "Free shipping on orders above \u20B92000 within 10 km";
 export const STANDARD_SHIPPING_FEE = 50;
 export const OIL_COLLECTION_SLUG = "cold-pressed-oils";
 
