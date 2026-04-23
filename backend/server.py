@@ -2478,6 +2478,25 @@ def build_seed_product(product: dict) -> dict:
     return p
 
 
+def serialize_product_record(product: dict) -> dict:
+    p = dict(product)
+    p["collection"] = normalize_collection_slug(p.get("collection"))
+    if p.get("slug") in PRODUCT_IMAGE_ASSET_MAP:
+        p["images"] = PRODUCT_IMAGE_ASSET_MAP[p["slug"]]
+    return p
+
+
+def serialize_collection_record(collection: dict) -> dict:
+    c = dict(collection)
+    slug = c.get("slug")
+    canonical = next((item for item in COLLECTIONS if item["slug"] == slug), None)
+    if canonical:
+        c["name"] = canonical["name"]
+        c["description"] = canonical["description"]
+        c["image"] = canonical["image"]
+    return c
+
+
 async def sync_seeded_products():
     """
     Force-update seeded product records in DB so backend code changes reliably
@@ -2754,7 +2773,7 @@ async def get_products(
         sort_field, sort_dir = "sort_order", 1
 
     products = await db.products.find(query, {"_id": 0}).sort(sort_field, sort_dir).limit(limit).to_list(limit)
-    return products
+    return [serialize_product_record(product) for product in products]
 
 
 @api_router.get("/products/{slug}")
@@ -2762,7 +2781,7 @@ async def get_product(slug: str):
     product = await db.products.find_one({"slug": slug}, {"_id": 0})
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
-    return product
+    return serialize_product_record(product)
 
 
 @api_router.get("/products/{slug}/related")
@@ -2775,7 +2794,7 @@ async def get_related_products(slug: str):
         {"collection": product["collection"], "slug": {"$ne": slug}},
         {"_id": 0}
     ).sort("sort_order", 1).limit(4).to_list(4)
-    return related
+    return [serialize_product_record(item) for item in related]
 
 
 # ── Collection Routes ───────────────────────────────────────────────────────
@@ -2783,10 +2802,11 @@ async def get_related_products(slug: str):
 @api_router.get("/collections")
 async def get_collections():
     await ensure_removed_collections_pruned()
-    return await db.collections.find(
+    collections = await db.collections.find(
         {"slug": {"$nin": list(REMOVED_COLLECTION_SLUGS)}},
         {"_id": 0},
     ).to_list(100)
+    return [serialize_collection_record(collection) for collection in collections]
 
 
 @api_router.get("/collections/{slug}")
@@ -2794,7 +2814,7 @@ async def get_collection(slug: str):
     collection = await db.collections.find_one({"slug": slug}, {"_id": 0})
     if not collection:
         raise HTTPException(status_code=404, detail="Collection not found")
-    return collection
+    return serialize_collection_record(collection)
 
 
 # ── Cart Routes ─────────────────────────────────────────────────────────────
@@ -3509,7 +3529,8 @@ async def check_pincode(data: PincodeCheck):
 
 @api_router.get("/bestsellers")
 async def get_bestsellers():
-    return await db.products.find({"tags": "bestseller"}, {"_id": 0}).sort("sort_order", 1).limit(8).to_list(8)
+    products = await db.products.find({"tags": "bestseller"}, {"_id": 0}).sort("sort_order", 1).limit(8).to_list(8)
+    return [serialize_product_record(product) for product in products]
 
 
 # ── Bundle ──────────────────────────────────────────────────────────────────
