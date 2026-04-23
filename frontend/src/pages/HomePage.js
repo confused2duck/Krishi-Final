@@ -201,7 +201,7 @@ const HomePage = () => {
                 </Link>
               </div>
               <p
-                className="max-w-[290px] text-left text-[0.8rem] font-semibold leading-tight tracking-[-0.02em] text-[#2D5016] sm:max-w-[360px] sm:text-[0.95rem] md:max-w-[460px] md:text-right md:text-[1.2rem] lg:max-w-[540px] lg:text-[1.45rem]"
+                className="max-w-[290px] text-left text-[0.8rem] font-semibold leading-tight tracking-[-0.03em] text-[#2D5016] sm:max-w-[420px] sm:text-[0.95rem] md:max-w-[620px] md:text-right md:text-[1.12rem] lg:max-w-[760px] lg:text-[1.35rem] whitespace-nowrap"
                 style={{ fontFamily: 'Inter, sans-serif' }}
               >
                 {FREE_SHIPPING_MESSAGE}
