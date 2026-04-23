@@ -10,12 +10,12 @@ const OilEducationPage = () => {
   const { videos: oilVideos, vidUrl: oilVidUrl } = usePageVideos('oil');
 
   const oils = [
-    { name: 'Groundnut Oil', benefits: ['High smoke point', 'Heart-healthy fats', 'Rich in Vitamin E'], uses: 'Deep frying, everyday cooking', image: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=300' },
-    { name: 'Coconut Oil', benefits: ['Boosts immunity', 'Natural moisturizer', 'Antimicrobial'], uses: 'South Indian cooking, baking, hair care', image: 'https://images.unsplash.com/photo-1526947425960-945c6e72858f?w=300' },
-    { name: 'Gingelly (Sesame) Oil', benefits: ['Rich in antioxidants', 'Skin nourishing', 'Traditional flavor'], uses: 'Tempering, pickles, massage', image: 'https://images.unsplash.com/photo-1612187715738-2cb7b935e35e?w=300' },
-    { name: 'Mustard Oil', benefits: ['Antibacterial', 'Improves digestion', 'Natural preservative'], uses: 'Bengali & North Indian cooking, pickles', image: 'https://images.unsplash.com/photo-1599451897608-71ae0ae4d0d3?w=300' },
-    { name: 'Flaxseed Oil', benefits: ['Highest Omega-3', 'Anti-inflammatory', 'Brain health'], uses: 'Salad dressings, smoothies (not for cooking)', image: 'https://images.unsplash.com/photo-1610725664285-7c57e6eeac3f?w=300' },
-    { name: 'Sunflower Oil', benefits: ['Light texture', 'High in Vitamin E', 'Good for heart'], uses: 'Light cooking, baking', image: 'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=300' },
+    { name: 'Groundnut Oil', benefits: ['High smoke point', 'Heart-healthy fats', 'Rich in Vitamin E'], uses: 'Deep frying, everyday cooking', image: '/images/products/groundnut-oil-page.png' },
+    { name: 'Coconut Oil', benefits: ['Boosts immunity', 'Natural moisturizer', 'Antimicrobial'], uses: 'South Indian cooking, baking, hair care', image: '/images/products/coconut-oil-page.png' },
+    { name: 'Gingelly (Sesame) Oil', benefits: ['Rich in antioxidants', 'Skin nourishing', 'Traditional flavor'], uses: 'Tempering, pickles, massage', image: '/images/products/gingelly-oil-page.png' },
+    { name: 'Mustard Oil', benefits: ['Antibacterial', 'Improves digestion', 'Natural preservative'], uses: 'Bengali & North Indian cooking, pickles', image: '/images/products/mustard-oil-page.png' },
+    { name: 'Flaxseed Oil', benefits: ['Highest Omega-3', 'Anti-inflammatory', 'Brain health'], uses: 'Salad dressings, smoothies (not for cooking)', image: '/images/products/flaxseed-oil-page.png' },
+    { name: 'Sunflower Oil', benefits: ['Light texture', 'High in Vitamin E', 'Good for heart'], uses: 'Light cooking, baking', image: '/images/products/sunflower-oil-page.png' },
   ];
 
   const faqs = [
