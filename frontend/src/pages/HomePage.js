@@ -194,15 +194,15 @@ const HomePage = () => {
                 </Link>
                 <Link
                   to="/pages/oil"
-                  className="inline-flex min-w-[108px] items-center justify-center rounded-full border border-white/45 bg-white/12 px-4 py-2 text-[0.88rem] font-semibold text-white backdrop-blur-[1px] transition-colors hover:bg-white hover:text-[#1C1B18] sm:min-w-[120px] sm:px-5 sm:text-[0.92rem]"
+                  className="inline-flex min-w-[108px] items-center justify-center rounded-full border border-[#C8602B] bg-[#C8602B] px-4 py-2 text-[0.88rem] font-semibold text-white transition-colors hover:bg-[#b45424] hover:border-[#b45424] sm:min-w-[120px] sm:px-5 sm:text-[0.92rem]"
                   data-testid="hero-learn-more"
                 >
                   Know More
                 </Link>
               </div>
               <p
-                className="max-w-[290px] text-left text-[0.8rem] font-semibold leading-tight tracking-[-0.02em] text-white sm:max-w-[360px] sm:text-[0.95rem] md:max-w-[460px] md:text-right md:text-[1.2rem] lg:max-w-[540px] lg:text-[1.45rem]"
-                style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}
+                className="max-w-[290px] text-left text-[0.8rem] font-semibold leading-tight tracking-[-0.02em] text-[#2D5016] sm:max-w-[360px] sm:text-[0.95rem] md:max-w-[460px] md:text-right md:text-[1.2rem] lg:max-w-[540px] lg:text-[1.45rem]"
+                style={{ fontFamily: 'Inter, sans-serif' }}
               >
                 {FREE_SHIPPING_MESSAGE}
               </p>
