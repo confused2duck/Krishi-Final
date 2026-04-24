@@ -8,9 +8,10 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '../c
 import { useCart } from '../context/CartContext';
 import { toast } from 'sonner';
 import SEO from '../components/SEO';
+import { API_BASE_URL } from '../lib/api';
 import { FREE_SHIPPING_MESSAGE, FREE_SHIPPING_THRESHOLD, OIL_COLLECTION_SLUG, resolveMediaUrl } from '../lib/utils';
 
-const API = process.env.REACT_APP_BACKEND_URL || "";
+const API = API_BASE_URL;
 const HIDDEN_COLLECTION_SLUGS = new Set(['unpolished-pulses', 'shikakai', 'wheat', 'frontpage']);
 
 const CollectionPage = () => {

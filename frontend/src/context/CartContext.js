@@ -1,9 +1,10 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from './AuthContext';
+import { API_BASE_URL } from '../lib/api';
 import { calculateOilOfferDiscount } from '../lib/utils';
 
-const API = process.env.REACT_APP_BACKEND_URL || "";
+const API = API_BASE_URL;
 
 const CartContext = createContext(null);
 

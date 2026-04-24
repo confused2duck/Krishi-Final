@@ -6,10 +6,11 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'sonner';
 import SEO from '../components/SEO';
+import { API_BASE_URL } from '../lib/api';
 import { resolveMediaUrl } from '../lib/utils';
 import { usePageImages, usePageVideos } from '../hooks/usePageMedia';
 
-const API = process.env.REACT_APP_BACKEND_URL || "";
+const API = API_BASE_URL;
 
 const BundleBuilderPage = () => {
   const [step, setStep] = useState(1);

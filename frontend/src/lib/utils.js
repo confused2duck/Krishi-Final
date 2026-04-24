@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "./api";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge"
 
@@ -5,7 +6,7 @@ export function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
 
-export function resolveMediaUrl(src, apiBase = process.env.REACT_APP_BACKEND_URL || "") {
+export function resolveMediaUrl(src, apiBase = API_BASE_URL) {
   if (!src) return "";
   if (/^(https?:)?\/\//i.test(src) || src.startsWith("data:") || src.startsWith("blob:")) {
     return src;

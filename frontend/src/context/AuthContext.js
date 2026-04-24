@@ -1,12 +1,16 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../lib/api';
 
-const API = process.env.REACT_APP_BACKEND_URL || "";
+const API = API_BASE_URL;
 
 const AuthContext = createContext(null);
 
 // Set auth token on all axios requests
 const setAuthToken = (token) => {
+  if (typeof window === 'undefined') {
+    return;
+  }
   if (token) {
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     localStorage.setItem('krishi_token', token);
@@ -17,7 +21,7 @@ const setAuthToken = (token) => {
 };
 
 // Restore token on page load
-const savedToken = localStorage.getItem('krishi_token');
+const savedToken = typeof window !== 'undefined' ? localStorage.getItem('krishi_token') : null;
 if (savedToken) {
   setAuthToken(savedToken);
 }
@@ -35,7 +39,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const checkAuth = useCallback(async () => {
-    const token = localStorage.getItem('krishi_token');
+    const token = typeof window !== 'undefined' ? localStorage.getItem('krishi_token') : null;
     if (!token) {
       setLoading(false);
       return;

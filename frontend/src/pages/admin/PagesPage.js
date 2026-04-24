@@ -2,8 +2,9 @@ import React, { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { FileText, Save, ArrowLeft, Plus } from 'lucide-react';
+import { API_BASE_URL } from '../../lib/api';
 
-const API = process.env.REACT_APP_BACKEND_URL || '';
+const API = API_BASE_URL;
 
 const EMPTY_FORM = {
   id: null,

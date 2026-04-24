@@ -4,6 +4,7 @@ import { Menu, X, ShoppingCart, User, Search, Phone } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { API_BASE_URL } from '../lib/api';
 import { FREE_SHIPPING_MESSAGE } from '../lib/utils';
 import {
   DropdownMenu,
@@ -12,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '../components/ui/dropdown-menu';
 
-const API = process.env.REACT_APP_BACKEND_URL || "";
+const API = API_BASE_URL;
 const HIDDEN_COLLECTION_SLUGS = new Set(['unpolished-pulses', 'shikakai', 'wheat', 'frontpage']);
 const FALLBACK_COLLECTIONS = [
   { name: 'Cold-Pressed Oil', slug: 'cold-pressed-oils' },

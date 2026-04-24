@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { FileText, Package, Users, ShoppingBag, Mail, ArrowRight, TrendingUp } from 'lucide-react';
+import { API_BASE_URL } from '../../lib/api';
 
-const API = process.env.REACT_APP_BACKEND_URL || '';
+const API = API_BASE_URL;
 
 const StatCard = ({ icon: Icon, label, value, color, to }) => (
   <Link to={to || '#'} className="bg-white rounded-xl p-5 border border-gray-100 hover:shadow-md transition-shadow flex items-center gap-4">

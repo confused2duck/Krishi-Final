@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { Plus, Edit2, Trash2, Eye, EyeOff, Search } from 'lucide-react';
 import { toast } from 'sonner';
+import { API_BASE_URL } from '../../lib/api';
 
-const API = process.env.REACT_APP_BACKEND_URL || '';
+const API = API_BASE_URL;
 
 const BlogListPage = () => {
   const [posts, setPosts] = useState([]);

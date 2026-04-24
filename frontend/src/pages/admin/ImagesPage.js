@@ -2,8 +2,9 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { Upload, Trash2, Copy, Image as ImageIcon, Film, Filter } from 'lucide-react';
+import { API_BASE_URL } from '../../lib/api';
 
-const API = process.env.REACT_APP_BACKEND_URL || '';
+const API = API_BASE_URL;
 const CHUNK_SIZE = 3 * 1024 * 1024; // 3 MB — stays under Vercel's 4.5 MB body limit
 
 const PAGE_OPTIONS = [

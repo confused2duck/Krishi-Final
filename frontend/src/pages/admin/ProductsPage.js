@@ -5,8 +5,9 @@ import {
   Plus, Search, Edit2, Trash2, X, ChevronDown, Image as ImageIcon,
   Package, Save, ArrowLeft, Upload
 } from 'lucide-react';
+import { API_BASE_URL } from '../../lib/api';
 
-const API = process.env.REACT_APP_BACKEND_URL || '';
+const API = API_BASE_URL;
 const HIDDEN_COLLECTION_SLUGS = new Set(['unpolished-pulses', 'shikakai', 'wheat', 'frontpage']);
 
 const COLLECTIONS = [

@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
+import { API_BASE_URL } from '../../lib/api';
 import {
   Eye, ArrowLeft, ShoppingBag, Clock, CheckCircle, Truck,
   PackageCheck, XCircle, Search, User, MapPin, CreditCard,
   ChevronDown, RefreshCw,
 } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || '';
+const API = API_BASE_URL;
 
 // ─── Status config ────────────────────────────────────────────────────────────
 

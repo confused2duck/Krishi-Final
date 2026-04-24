@@ -5,11 +5,12 @@ import { ArrowRight, Truck, Leaf, Users, Shield, ChevronLeft, ChevronRight, Play
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '../components/ui/carousel';
 import { Switch } from '../components/ui/switch';
 import SEO from '../components/SEO';
+import { API_BASE_URL } from '../lib/api';
 import { resolveMediaUrl } from '../lib/utils';
 import { useCMSPage } from '../hooks/useCMSPage';
 import { usePageImages, usePageVideos } from '../hooks/usePageMedia';
 
-const API = process.env.REACT_APP_BACKEND_URL || "";
+const API = API_BASE_URL;
 const HIDDEN_COLLECTION_SLUGS = new Set(['unpolished-pulses', 'shikakai', 'wheat', 'frontpage']);
 
 const heroSlides = [

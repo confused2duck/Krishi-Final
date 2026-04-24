@@ -2,13 +2,14 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
+import { API_BASE_URL } from '../../lib/api';
 import {
   Save, Eye, EyeOff, Plus, Trash2, ChevronDown, ChevronUp,
   CheckCircle, AlertCircle, XCircle, Info, ArrowLeft, Globe,
   MessageSquare, Cpu, Search
 } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL || '';
+const API = API_BASE_URL;
 
 const CATEGORIES = ['Education', 'Tips', 'Health', 'Recipes', 'News', 'Guides'];
 const SCHEMA_TYPES = ['BlogPosting', 'Article', 'FAQPage', 'HowTo', 'NewsArticle'];

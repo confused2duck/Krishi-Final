@@ -3,9 +3,10 @@ import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { ArrowLeft, Calendar, User } from 'lucide-react';
 import SEO from '../components/SEO';
+import { API_BASE_URL } from '../lib/api';
 import { usePageImages, usePageVideos } from '../hooks/usePageMedia';
 
-const API = process.env.REACT_APP_BACKEND_URL || "";
+const API = API_BASE_URL;
 
 const BlogPage = () => {
   const { slug } = useParams();

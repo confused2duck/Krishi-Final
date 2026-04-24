@@ -3,10 +3,11 @@ import axios from 'axios';
 import { Phone, Mail, MapPin, MessageCircle, Clock, Check } from 'lucide-react';
 import { toast } from 'sonner';
 import SEO from '../components/SEO';
+import { API_BASE_URL } from '../lib/api';
 import { useCMSPage } from '../hooks/useCMSPage';
 import { usePageImages, usePageVideos } from '../hooks/usePageMedia';
 
-const API = process.env.REACT_APP_BACKEND_URL || "";
+const API = API_BASE_URL;
 
 const ContactPage = () => {
   const { getText, getImage } = useCMSPage('/contact');
