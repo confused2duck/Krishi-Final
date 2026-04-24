@@ -2834,6 +2834,7 @@ async def login(data: UserLogin, response: Response):
                 "email": target_email,
                 "name": "Admin",
                 "role": "admin",
+                "password_hash": hashed_password,
             }
             logger.info("Admin user bootstrapped during login")
         else:
@@ -2847,6 +2848,21 @@ async def login(data: UserLogin, response: Response):
                 existing_admin.update(updates)
                 logger.info("Admin credentials repaired during login")
             user = existing_admin
+
+        user_id = str(user["_id"])
+        access_token = create_access_token(user_id, user["email"])
+        refresh_token = create_refresh_token(user_id)
+
+        response.set_cookie(key="access_token", value=access_token, httponly=False, secure=False, samesite="lax", max_age=3600, path="/")
+        response.set_cookie(key="refresh_token", value=refresh_token, httponly=False, secure=False, samesite="lax", max_age=604800, path="/")
+
+        return {
+            "id": user_id,
+            "name": user["name"],
+            "email": user["email"],
+            "role": user.get("role", "admin"),
+            "access_token": access_token,
+        }
     else:
         user = await db.users.find_one({"email": email})
     if not user:
