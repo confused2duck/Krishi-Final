@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
   LayoutDashboard, FileText, Plus, LogOut, Menu, X,
-  ChevronRight, ExternalLink, Package, ShoppingBag, Users, Mail, Images
+  ChevronRight, ExternalLink, Package, ShoppingBag, Users, Mail, Images, PanelsTopLeft
 } from 'lucide-react';
 
 const AdminLayout = ({ children }) => {
@@ -25,6 +25,7 @@ const AdminLayout = ({ children }) => {
     { path: '/admin/orders', label: 'Orders', icon: ShoppingBag },
     { path: '/admin/customers', label: 'Customers', icon: Users },
     { path: '/admin/contacts', label: 'Enquiries', icon: Mail },
+    { path: '/admin/pages', label: 'CMS Pages', icon: PanelsTopLeft },
     { path: '/admin/images', label: 'Images', icon: Images },
   ];
 

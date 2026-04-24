@@ -2143,7 +2143,7 @@ PRODUCTS_SEED = [
 
 # Collections Data
 COLLECTIONS = [
-    {"name": "Cold Pressed Oils", "slug": "cold-pressed-oils", "description": "Pure, chemical-free oils extracted using traditional wooden press", "image": "/images/products/groundnut-oil-main.jpeg"},
+    {"name": "Cold Pressed Oils", "slug": "cold-pressed-oils", "description": "Pure, chemical-free oils extracted using traditional wooden press", "image": "/images/products/groundnut-oil-main.webp"},
     {"name": "Traditional Rices", "slug": "traditional-rices", "description": "Heritage rice varieties from across India", "image": "/images/products/rajmudi-rice-main.png"},
     {"name": "Unpolished Millets", "slug": "unpolished-millets", "description": "Nutrient-rich ancient grains for modern health", "image": "/images/products/navane-foxtail-millet-main.png"},
     {"name": "Spices & Pulses", "slug": "spices", "description": "Farm-fresh spices ground to perfection, and whole unpolished pulses", "image": "/images/products/turmeric-powder-main.png"},
@@ -2346,6 +2346,7 @@ async def lifespan(app: FastAPI):
         await sync_default_logo()
         await seed_products()
         await sync_seeded_products()
+        await sync_curated_product_images()
         await seed_collections()
         await sync_curated_collection_metadata()
         await prune_removed_collections()
@@ -2423,7 +2424,7 @@ async def seed_products():
 
 
 PRODUCT_IMAGE_ASSET_MAP = {
-    "groundnut-oil": ["/images/products/groundnut-oil-main.jpeg"],
+    "groundnut-oil": ["/images/products/groundnut-oil-main.webp"],
     "coconut-oil": ["/images/products/coconut-oil-main.png"],
     "sunflower-oil": ["/images/products/sunflower-oil-main.jpg"],
     "deepam-oil": ["/images/products/deepam-oil-main.png"],
@@ -2510,47 +2511,40 @@ def build_seed_product(product: dict) -> dict:
 def serialize_product_record(product: dict) -> dict:
     p = dict(product)
     p["collection"] = normalize_collection_slug(p.get("collection"))
-    if p.get("slug") in PRODUCT_IMAGE_ASSET_MAP:
-        p["images"] = PRODUCT_IMAGE_ASSET_MAP[p["slug"]]
     return p
 
 
 def serialize_collection_record(collection: dict) -> dict:
     c = dict(collection)
-    slug = c.get("slug")
-    canonical = next((item for item in COLLECTIONS if item["slug"] == slug), None)
-    if canonical:
-        c["name"] = canonical["name"]
-        c["description"] = canonical["description"]
-        c["image"] = canonical["image"]
+    c["slug"] = normalize_collection_slug(c.get("slug"))
     return c
 
 
 async def sync_seeded_products():
     """
-    Force-update seeded product records in DB so backend code changes reliably
-    reach the storefront for existing products as well as new inserts.
+    Preserve admin/CMS edits on existing product records while still backfilling
+    missing fields for legacy seeded data.
     """
-    from pymongo import UpdateOne
-
     now = datetime.now(timezone.utc)
-    ops = []
+    updated = 0
     for product in PRODUCTS_SEED:
         payload = build_seed_product(product)
-        payload["updated_at"] = now
-        payload.pop("created_at", None)
-        ops.append(
-            UpdateOne(
-                {"slug": payload["slug"]},
-                {"$set": payload, "$setOnInsert": {"created_at": now}},
-                upsert=True,
-            )
-        )
-    if ops:
-        result = await db.products.bulk_write(ops)
-        logger.info(
-            f"Seeded products synced: {result.upserted_count} inserted, {result.modified_count} updated"
-        )
+        existing = await db.products.find_one({"slug": payload["slug"]})
+        if not existing:
+            continue
+
+        set_updates = {}
+        for key, value in payload.items():
+            if key in {"name", "description", "collection", "price", "compare_price", "stock", "benefits", "uses", "nutritional_facts", "storage", "tags", "sizes", "images", "sort_order"}:
+                if existing.get(key) in (None, "", [], {}):
+                    set_updates[key] = value
+
+        if set_updates:
+            set_updates["updated_at"] = now
+            await db.products.update_one({"slug": payload["slug"]}, {"$set": set_updates})
+            updated += 1
+
+    logger.info(f"Seeded product defaults backfilled: {updated}")
 
 
 async def seed_collections():
@@ -2567,19 +2561,37 @@ async def seed_collections():
 
 async def sync_curated_collection_metadata():
     """
-    Force-update collection metadata in DB so storefront collection pages reflect
-    the latest approved backend records even when collection seeding is create-only.
+    Backfill missing collection metadata without overwriting admin-managed CMS edits.
     """
+    legacy_image_migrations = {
+        "cold-pressed-oils": {
+            "from": {"/images/products/groundnut-oil-main.jpeg"},
+            "to": "/images/products/groundnut-oil-main.webp",
+        }
+    }
     updated = 0
     now = datetime.now(timezone.utc)
     for col in COLLECTIONS:
+        existing = await db.collections.find_one({"slug": col["slug"]})
+        if not existing:
+            continue
+
+        set_updates = {}
+        for key in ("name", "description", "image"):
+            if existing.get(key) in (None, "", []):
+                set_updates[key] = col[key]
+        migration = legacy_image_migrations.get(col["slug"])
+        if migration and existing.get("image") in migration["from"]:
+            set_updates["image"] = migration["to"]
+
+        if not set_updates:
+            continue
+
         result = await db.collections.update_one(
             {"slug": col["slug"]},
             {
                 "$set": {
-                    "name": col["name"],
-                    "description": col["description"],
-                    "image": col["image"],
+                    **set_updates,
                     "updated_at": now,
                 }
             },
@@ -2653,10 +2665,32 @@ async def seed_cms_pages():
 
 async def sync_curated_product_images():
     """
-    Force-update curated product images in DB so CMS/storefront reflects the
-    latest approved visuals even when product seeding is create-only.
+    Migrate deprecated curated image paths without overwriting admin-managed
+    product image changes.
     """
-    await sync_seeded_products()
+    migrations = {
+        "groundnut-oil": {
+            "from": {"/images/products/groundnut-oil-main.jpeg"},
+            "to": ["/images/products/groundnut-oil-main.webp"],
+        }
+    }
+
+    updated = 0
+    now = datetime.now(timezone.utc)
+    for slug, config in migrations.items():
+        product = await db.products.find_one({"slug": slug})
+        if not product:
+            continue
+
+        current_images = product.get("images") or []
+        if not current_images or set(current_images).issubset(config["from"]):
+            await db.products.update_one(
+                {"slug": slug},
+                {"$set": {"images": config["to"], "updated_at": now}},
+            )
+            updated += 1
+
+    logger.info(f"Curated image migrations applied: {updated}")
 
 
 async def write_test_credentials():
@@ -3612,6 +3646,7 @@ async def run_seed(token: str):
         await sync_default_logo()
         await seed_products()
         await sync_seeded_products()
+        await sync_curated_product_images()
         await seed_collections()
         await sync_curated_collection_metadata()
         await prune_removed_collections()

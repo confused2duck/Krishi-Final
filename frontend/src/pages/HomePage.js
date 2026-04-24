@@ -5,7 +5,8 @@ import { ArrowRight, Truck, Leaf, Users, Shield, ChevronLeft, ChevronRight, Play
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '../components/ui/carousel';
 import { Switch } from '../components/ui/switch';
 import SEO from '../components/SEO';
-import { FREE_SHIPPING_MESSAGE, resolveMediaUrl } from '../lib/utils';
+import { resolveMediaUrl } from '../lib/utils';
+import { useCMSPage } from '../hooks/useCMSPage';
 import { usePageImages, usePageVideos } from '../hooks/usePageMedia';
 
 const API = process.env.REACT_APP_BACKEND_URL || "";
@@ -28,9 +29,8 @@ const featuredCollections = [
 ];
 
 const HomePage = () => {
-  const getText = (_key, fallback = '') => fallback;
-  const getImage = (_key, fallback = '') => fallback;
-  const getSection = (_key, fallback = null) => fallback;  const [bestsellers, setBestsellers] = useState([]);
+  const { getSection } = useCMSPage('/');
+  const [bestsellers, setBestsellers] = useState([]);
   const [showColdPressed, setShowColdPressed] = useState(true);
   const [blogPosts, setBlogPosts] = useState([]);
 
@@ -183,29 +183,23 @@ const HomePage = () => {
           />
 
           <div className="absolute inset-x-0 bottom-0">
-            <div className="flex min-h-[72px] flex-col items-start justify-center gap-3 px-4 py-3 sm:min-h-[88px] sm:px-6 md:min-h-[108px] md:flex-row md:items-center md:justify-between md:gap-4 md:px-10 lg:min-h-[124px] lg:px-14">
-              <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
+            <div className="flex min-h-[72px] items-center px-4 py-3 sm:min-h-[88px] sm:px-6 md:min-h-[108px] md:px-10 lg:min-h-[124px] lg:px-14">
+              <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 md:gap-4">
                 <Link
                   to="/collections/cold-pressed-oils"
-                  className="inline-flex min-w-[108px] items-center justify-center rounded-full bg-[#C9682A] px-4 py-2 text-[0.88rem] font-semibold text-white shadow-[0_8px_18px_rgba(201,104,42,0.22)] transition-colors hover:bg-[#b95c23] sm:min-w-[120px] sm:px-5 sm:text-[0.92rem]"
+                  className="inline-flex min-w-[118px] items-center justify-center rounded-full bg-[#C9682A] px-5 py-2.5 text-[0.9rem] font-semibold text-white shadow-[0_8px_18px_rgba(201,104,42,0.22)] transition-colors hover:bg-[#b95c23] sm:min-w-[132px] sm:px-6 sm:text-[0.95rem]"
                   data-testid="hero-shop-now"
                 >
                   Shop Now
                 </Link>
                 <Link
                   to="/pages/oil"
-                  className="inline-flex min-w-[108px] items-center justify-center rounded-full border border-[#C8602B] bg-[#C8602B] px-4 py-2 text-[0.88rem] font-semibold text-white transition-colors hover:bg-[#b45424] hover:border-[#b45424] sm:min-w-[120px] sm:px-5 sm:text-[0.92rem]"
+                  className="inline-flex min-w-[118px] items-center justify-center rounded-full border border-[#C8602B] bg-[#C8602B] px-5 py-2.5 text-[0.9rem] font-semibold text-white transition-colors hover:bg-[#b45424] hover:border-[#b45424] sm:min-w-[132px] sm:px-6 sm:text-[0.95rem]"
                   data-testid="hero-learn-more"
                 >
                   Know More
                 </Link>
               </div>
-              <p
-                className="max-w-[290px] text-left text-[0.8rem] font-semibold leading-tight tracking-[-0.03em] text-[#2D5016] sm:max-w-[420px] sm:text-[0.95rem] md:max-w-[620px] md:text-right md:text-[1.12rem] lg:max-w-[760px] lg:text-[1.35rem] whitespace-nowrap"
-                style={{ fontFamily: 'Inter, sans-serif' }}
-              >
-                {FREE_SHIPPING_MESSAGE}
-              </p>
             </div>
           </div>
         </div>

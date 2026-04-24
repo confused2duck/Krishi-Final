@@ -3,13 +3,13 @@ import axios from 'axios';
 import { Phone, Mail, MapPin, MessageCircle, Clock, Check } from 'lucide-react';
 import { toast } from 'sonner';
 import SEO from '../components/SEO';
+import { useCMSPage } from '../hooks/useCMSPage';
 import { usePageImages, usePageVideos } from '../hooks/usePageMedia';
 
 const API = process.env.REACT_APP_BACKEND_URL || "";
 
 const ContactPage = () => {
-  const getText = (_key, fallback = '') => fallback;
-  const getImage = (_key, fallback = '') => fallback;
+  const { getText, getImage } = useCMSPage('/contact');
   const [formData, setFormData] = useState({
     name: '',
     email: '',

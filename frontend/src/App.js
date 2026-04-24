@@ -36,6 +36,7 @@ import OrdersPage from "./pages/admin/OrdersPage";
 import CustomersPage from "./pages/admin/CustomersPage";
 import ContactsPage from "./pages/admin/ContactsPage";
 import ImagesPage from "./pages/admin/ImagesPage";
+import PagesPage from "./pages/admin/PagesPage";
 
 // Analytics placeholder component
 const AnalyticsScripts = () => {
@@ -139,6 +140,7 @@ function App() {
             <Route path="/admin/customers" element={<AdminRoute><CustomersPage /></AdminRoute>} />
             <Route path="/admin/contacts" element={<AdminRoute><ContactsPage /></AdminRoute>} />
             <Route path="/admin/images" element={<AdminRoute><ImagesPage /></AdminRoute>} />
+            <Route path="/admin/pages" element={<AdminRoute><PagesPage /></AdminRoute>} />
 
             {/* Fallback */}
             <Route path="*" element={<MainLayout><HomePage /></MainLayout>} />

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { FileText, Plus, Package, Users, ShoppingBag, Mail, ArrowRight, TrendingUp, Eye } from 'lucide-react';
+import { FileText, Package, Users, ShoppingBag, Mail, ArrowRight, TrendingUp } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL || '';
 
@@ -37,10 +37,10 @@ const AdminDashboard = () => {
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
         <StatCard icon={FileText} label="Published Posts" value={stats?.blog_published} color="bg-[#2D5016]" to="/admin/blog" />
         <StatCard icon={TrendingUp} label="Draft Posts" value={stats?.blog_drafts} color="bg-[#C8602B]" to="/admin/blog" />
-        <StatCard icon={Package} label="Products" value={stats?.products} color="bg-blue-600" />
-        <StatCard icon={ShoppingBag} label="Orders" value={stats?.orders} color="bg-purple-600" />
-        <StatCard icon={Users} label="Customers" value={stats?.users} color="bg-indigo-600" />
-        <StatCard icon={Mail} label="New Enquiries" value={stats?.new_contacts} color="bg-amber-600" />
+        <StatCard icon={Package} label="Products" value={stats?.products} color="bg-blue-600" to="/admin/products" />
+        <StatCard icon={ShoppingBag} label="Orders" value={stats?.orders} color="bg-purple-600" to="/admin/orders" />
+        <StatCard icon={Users} label="Customers" value={stats?.users} color="bg-indigo-600" to="/admin/customers" />
+        <StatCard icon={Mail} label="New Enquiries" value={stats?.new_contacts} color="bg-amber-600" to="/admin/contacts" />
       </div>
 
       {/* Quick Actions */}
@@ -74,6 +74,16 @@ const AdminDashboard = () => {
             <div>
               <p className="font-semibold text-lg">Manage Products</p>
               <p className="text-gray-500 text-sm mt-1">Add, edit, or remove products</p>
+            </div>
+            <ArrowRight className="group-hover:translate-x-1 transition-transform text-gray-400" />
+          </Link>
+          <Link
+            to="/admin/pages"
+            className="bg-white border border-gray-200 text-gray-800 rounded-xl p-5 flex items-center justify-between hover:shadow-md transition-shadow group"
+          >
+            <div>
+              <p className="font-semibold text-lg">Manage CMS Pages</p>
+              <p className="text-gray-500 text-sm mt-1">Edit page sections that power the storefront</p>
             </div>
             <ArrowRight className="group-hover:translate-x-1 transition-transform text-gray-400" />
           </Link>

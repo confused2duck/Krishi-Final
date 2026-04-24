@@ -2,11 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Play, Leaf, Users, Award, Heart } from 'lucide-react';
 import SEO from '../components/SEO';
+import { useCMSPage } from '../hooks/useCMSPage';
 import { usePageImages, usePageVideos } from '../hooks/usePageMedia';
 
 const AboutPage = () => {
-  const getText = (_key, fallback = '') => fallback;
-  const getImage = (_key, fallback = '') => fallback;
+  const { getText, getImage } = useCMSPage('/about');
   const { images: aboutImages, imgUrl: aboutImgUrl } = usePageImages('about');
   const { videos: aboutVideos, vidUrl: aboutVidUrl } = usePageVideos('about');
   const storyImage = getImage(

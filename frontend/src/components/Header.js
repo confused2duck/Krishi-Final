@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, ShoppingCart, User, Search, Phone } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { FREE_SHIPPING_MESSAGE } from '../lib/utils';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -46,6 +47,13 @@ const Header = () => {
 
   return (
     <header className="sticky-header" data-testid="main-header">
+      <div className="border-b border-[#2D5016]/10 bg-[#2D5016]">
+        <div className="container-krishi">
+          <div className="flex min-h-[34px] items-center justify-center py-1 text-center text-[0.75rem] font-medium tracking-[0.01em] text-[#F5EDD6] sm:text-[0.82rem]">
+            {FREE_SHIPPING_MESSAGE}
+          </div>
+        </div>
+      </div>
       <div className="container-krishi">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
