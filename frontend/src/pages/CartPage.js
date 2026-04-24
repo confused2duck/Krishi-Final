@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Minus, Plus, Trash2, Truck, ShoppingBag, ArrowRight, Check, X } from 'lucide-react';
-import { Switch } from '../components/ui/switch';
+import { Minus, Plus, Trash2, Truck, ShoppingBag, ArrowRight, Check, X, CreditCard } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'sonner';
@@ -15,12 +14,14 @@ import {
 } from '../lib/utils';
 
 const API = process.env.REACT_APP_BACKEND_URL || "";
+const COD_PAYMENT_METHOD = 'COD';
+const RAZORPAY_PLACEHOLDER_METHOD = 'Razorpay Placeholder';
 
 const CartPage = () => {
   const { cart, updateCart, removeFromCart, clearCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [codSelected, setCodSelected] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState(COD_PAYMENT_METHOD);
   const [upsellProducts, setUpsellProducts] = useState([]);
   const [showCheckout, setShowCheckout] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
@@ -87,6 +88,8 @@ const CartPage = () => {
   const total = subtotal - discount + shipping;
   const progressPercent = Math.min((subtotal / FREE_SHIPPING_THRESHOLD) * 100, 100);
   const remaining = Math.max(FREE_SHIPPING_THRESHOLD - subtotal, 0);
+  const codSelected = paymentMethod === COD_PAYMENT_METHOD;
+  const razorpayPlaceholderSelected = paymentMethod === RAZORPAY_PLACEHOLDER_METHOD;
 
   const updateQuantity = (productId, size, newQuantity) => {
     if (newQuantity < 1) {
@@ -137,7 +140,7 @@ const CartPage = () => {
         discount,
         shipping,
         total,
-        payment_method: codSelected ? 'COD' : 'prepaid',
+        payment_method: paymentMethod,
         shipping_address: shippingForm
       };
 
@@ -146,7 +149,11 @@ const CartPage = () => {
       setOrderPlaced(true);
       setShowCheckout(false);
       clearCart();
-      toast.success('Order placed successfully!');
+      toast.success(
+        razorpayPlaceholderSelected
+          ? 'Razorpay placeholder order created successfully.'
+          : 'Order placed successfully!'
+      );
     } catch (error) {
       toast.error('Failed to place order. Please try again.');
     } finally {
@@ -165,6 +172,11 @@ const CartPage = () => {
           <p className="text-[#4A5D3F] mb-2">
             Thank you for your order. We'll send you a confirmation shortly.
           </p>
+          {orderDetails?.payment_method === RAZORPAY_PLACEHOLDER_METHOD && (
+            <p className="text-sm text-[#4A5D3F] mb-4">
+              Razorpay is currently set up as a placeholder, so this order has been saved for manual follow-up instead of collecting payment online.
+            </p>
+          )}
           {orderDetails?.order_id && (
             <p className="text-sm text-[#4A5D3F] mb-8">Order ID: <span className="font-medium text-[#1A2F0D]">{orderDetails.order_id}</span></p>
           )}
@@ -200,7 +212,7 @@ const CartPage = () => {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" data-testid="checkout-modal">
             <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
               <div className="flex items-center justify-between p-6 border-b border-[#2D5016]/10">
-                <h2 className="heading-h3">Shipping Details</h2>
+                <h2 className="heading-h3">Shipping & Payment</h2>
                 <button onClick={() => setShowCheckout(false)} className="text-[#4A5D3F] hover:text-[#1A2F0D]">
                   <X size={20} />
                 </button>
@@ -276,6 +288,44 @@ const CartPage = () => {
                   />
                 </div>
 
+                <div>
+                  <p className="block text-sm font-medium text-[#1A2F0D] mb-2">Payment Method</p>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod(COD_PAYMENT_METHOD)}
+                      className={`rounded-2xl border p-4 text-left transition-colors ${
+                        codSelected
+                          ? 'border-[#2D5016] bg-[#2D5016]/5'
+                          : 'border-[#2D5016]/10 hover:border-[#2D5016]/30'
+                      }`}
+                      data-testid="payment-method-cod"
+                    >
+                      <div className="flex items-center gap-2 text-[#1A2F0D]">
+                        <Truck size={16} />
+                        <span className="font-semibold">Cash on Delivery</span>
+                      </div>
+                      <p className="mt-2 text-sm text-[#4A5D3F]">Collect payment when the order reaches the customer.</p>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod(RAZORPAY_PLACEHOLDER_METHOD)}
+                      className={`rounded-2xl border p-4 text-left transition-colors ${
+                        razorpayPlaceholderSelected
+                          ? 'border-[#C8602B] bg-[#C8602B]/5'
+                          : 'border-[#2D5016]/10 hover:border-[#C8602B]/35'
+                      }`}
+                      data-testid="payment-method-razorpay-placeholder"
+                    >
+                      <div className="flex items-center gap-2 text-[#1A2F0D]">
+                        <CreditCard size={16} />
+                        <span className="font-semibold">Razorpay Placeholder</span>
+                      </div>
+                      <p className="mt-2 text-sm text-[#4A5D3F]">Placeholder only for now. Live Razorpay checkout will be connected later.</p>
+                    </button>
+                  </div>
+                </div>
+
                 <div className="border-t border-[#2D5016]/10 pt-4 space-y-2 text-sm">
                   <div className="flex justify-between text-[#4A5D3F]">
                     <span>Subtotal</span><span>₹{subtotal}</span>
@@ -300,8 +350,14 @@ const CartPage = () => {
                   className="btn-accent w-full disabled:opacity-50"
                   data-testid="place-order-btn"
                 >
-                  {checkoutLoading ? 'Placing Order...' : codSelected ? 'Place Order (COD)' : `Pay ₹${total}`}
+                  {checkoutLoading ? 'Placing Order...' : codSelected ? 'Place Order (COD)' : 'Create Razorpay Placeholder Order'}
                 </button>
+
+                {razorpayPlaceholderSelected && (
+                  <p className="rounded-xl bg-[#F5EDD6] px-4 py-3 text-sm text-[#4A5D3F]">
+                    This is a temporary placeholder for Razorpay. No online payment is collected yet, but the selected payment method will be saved with the order.
+                  </p>
+                )}
 
                 <p className="text-sm text-[#4A5D3F]">{FREE_SHIPPING_MESSAGE}</p>
                 {shippingCheck && (
@@ -411,17 +467,46 @@ const CartPage = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between py-4 border-t border-[#2D5016]/10 mt-4">
-                  <span className="text-[#1A2F0D]">Cash on Delivery</span>
-                  <Switch
-                    checked={codSelected}
-                    onCheckedChange={setCodSelected}
-                    data-testid="cod-toggle"
-                  />
+                <div className="border-t border-[#2D5016]/10 mt-4 pt-4">
+                  <p className="text-sm font-medium text-[#1A2F0D] mb-3">Payment Method</p>
+                  <div className="grid gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod(COD_PAYMENT_METHOD)}
+                      className={`flex items-start gap-3 rounded-2xl border px-4 py-3 text-left transition-colors ${
+                        codSelected
+                          ? 'border-[#2D5016] bg-[#2D5016]/5'
+                          : 'border-[#2D5016]/10 hover:border-[#2D5016]/30'
+                      }`}
+                      data-testid="summary-payment-cod"
+                    >
+                      <Truck size={18} className="mt-0.5 text-[#2D5016]" />
+                      <div>
+                        <p className="font-medium text-[#1A2F0D]">Cash on Delivery</p>
+                        <p className="text-sm text-[#4A5D3F]">Pay after the order arrives.</p>
+                      </div>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod(RAZORPAY_PLACEHOLDER_METHOD)}
+                      className={`flex items-start gap-3 rounded-2xl border px-4 py-3 text-left transition-colors ${
+                        razorpayPlaceholderSelected
+                          ? 'border-[#C8602B] bg-[#C8602B]/5'
+                          : 'border-[#2D5016]/10 hover:border-[#C8602B]/35'
+                      }`}
+                      data-testid="summary-payment-razorpay-placeholder"
+                    >
+                      <CreditCard size={18} className="mt-0.5 text-[#C8602B]" />
+                      <div>
+                        <p className="font-medium text-[#1A2F0D]">Razorpay Placeholder</p>
+                        <p className="text-sm text-[#4A5D3F]">Visible placeholder until live gateway integration is added.</p>
+                      </div>
+                    </button>
+                  </div>
                 </div>
 
                 <button onClick={handleCheckout} className="btn-accent w-full mt-4" data-testid="checkout-btn">
-                  {codSelected ? 'Place Order (COD)' : 'Proceed to Pay'}
+                  {codSelected ? 'Place Order (COD)' : 'Proceed with Razorpay Placeholder'}
                 </button>
 
                 <div className="flex items-center justify-center gap-2 mt-4 text-sm text-[#4A5D3F]">

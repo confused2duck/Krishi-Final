@@ -151,7 +151,7 @@ class CartUpdate(BaseModel):
 class OrderCreate(BaseModel):
     items: List[CartItem]
     shipping_address: Dict[str, str]
-    payment_method: str = "cod"
+    payment_method: str = "COD"
     is_subscription: bool = False
     subscription_frequency: Optional[str] = None
 
@@ -2994,6 +2994,9 @@ async def create_order(data: OrderCreate, user: dict = Depends(get_current_user)
     within_radius = is_within_free_shipping_radius(data.shipping_address.get("pincode"))
     shipping = 0 if total >= FREE_SHIPPING_THRESHOLD and within_radius else STANDARD_SHIPPING_FEE
 
+    payment_method = data.payment_method or "COD"
+    payment_status = "placeholder_pending" if payment_method == "Razorpay Placeholder" else "pending"
+
     order_doc = {
         "user_id": user["_id"],
         "items": items,
@@ -3002,7 +3005,9 @@ async def create_order(data: OrderCreate, user: dict = Depends(get_current_user)
         "shipping": shipping,
         "total": total - discount + shipping,
         "shipping_address": data.shipping_address,
-        "payment_method": data.payment_method,
+        "payment_method": payment_method,
+        "payment_status": payment_status,
+        "payment_provider": "razorpay" if payment_method == "Razorpay Placeholder" else "offline",
         "status": "pending",
         "created_at": datetime.now(timezone.utc),
         "free_shipping_applied": shipping == 0,
@@ -3013,7 +3018,13 @@ async def create_order(data: OrderCreate, user: dict = Depends(get_current_user)
     order_id = str(result.inserted_id)
 
     await db.carts.delete_one({"user_id": user["_id"]})
-    return {"order_id": order_id, "status": "pending", "total": order_doc["total"]}
+    return {
+        "order_id": order_id,
+        "status": "pending",
+        "total": order_doc["total"],
+        "payment_method": order_doc["payment_method"],
+        "payment_status": order_doc["payment_status"],
+    }
 
 
 @api_router.get("/orders")
