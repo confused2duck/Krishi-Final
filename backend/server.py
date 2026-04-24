@@ -2385,6 +2385,38 @@ async def seed_admin():
         )
         logger.info("Admin password updated")
 
+async def ensure_admin_credentials(email: str, password: str):
+    admin_email = os.environ.get("ADMIN_EMAIL", "admin@krishi.com").lower()
+    admin_password = os.environ.get("ADMIN_PASSWORD", "admin123")
+
+    if email != admin_email or password != admin_password:
+        return
+
+    existing = await db.users.find_one({"email": admin_email})
+    hashed = hash_password(admin_password)
+
+    if existing is None:
+        await db.users.insert_one({
+            "email": admin_email,
+            "password_hash": hashed,
+            "name": "Admin",
+            "role": "admin",
+            "phone": "",
+            "created_at": datetime.now(timezone.utc)
+        })
+        logger.info("Admin user auto-created during login")
+        return
+
+    updates = {}
+    if existing.get("role") != "admin":
+        updates["role"] = "admin"
+    if not verify_password(admin_password, existing["password_hash"]):
+        updates["password_hash"] = hashed
+
+    if updates:
+        await db.users.update_one({"email": admin_email}, {"$set": updates})
+        logger.info("Admin credentials auto-synced during login")
+
 async def sync_default_logo():
     logo_path = Path(__file__).resolve().parent.parent / "frontend" / "public" / "images" / "branding" / "krishi-logo.png"
     if not logo_path.exists():
@@ -2764,6 +2796,7 @@ async def register(data: UserRegister, response: Response):
 @api_router.post("/auth/login")
 async def login(data: UserLogin, response: Response):
     email = data.email.lower()
+    await ensure_admin_credentials(email, data.password)
     user = await db.users.find_one({"email": email})
     if not user:
         raise HTTPException(status_code=401, detail="Invalid email or password")
