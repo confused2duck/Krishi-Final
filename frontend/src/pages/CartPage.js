@@ -181,9 +181,9 @@ const CartPage = () => {
           {orderDetails?.order_id && (
             <p className="text-sm text-[#4A5D3F] mb-8">Order ID: <span className="font-medium text-[#1A2F0D]">{orderDetails.order_id}</span></p>
           )}
-          <div className="flex gap-4 justify-center">
-            <Link to="/account" className="btn-primary">Track Order</Link>
-            <Link to="/collections/all" className="btn-secondary">Continue Shopping</Link>
+          <div className="flex flex-col justify-center gap-4 sm:flex-row">
+            <Link to="/account" className="btn-primary w-full sm:w-auto">Track Order</Link>
+            <Link to="/collections/all" className="btn-secondary w-full sm:w-auto">Continue Shopping</Link>
           </div>
         </div>
       </div>
@@ -212,13 +212,13 @@ const CartPage = () => {
         {showCheckout && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" data-testid="checkout-modal">
             <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-              <div className="flex items-center justify-between p-6 border-b border-[#2D5016]/10">
+              <div className="flex items-center justify-between border-b border-[#2D5016]/10 p-4 sm:p-6">
                 <h2 className="heading-h3">Shipping & Payment</h2>
                 <button onClick={() => setShowCheckout(false)} className="text-[#4A5D3F] hover:text-[#1A2F0D]">
                   <X size={20} />
                 </button>
               </div>
-              <form onSubmit={handlePlaceOrder} className="p-6 space-y-4">
+              <form onSubmit={handlePlaceOrder} className="space-y-4 p-4 sm:p-6">
                 <div>
                   <label className="block text-sm font-medium text-[#1A2F0D] mb-1">Full Name *</label>
                   <input
@@ -252,7 +252,7 @@ const CartPage = () => {
                     data-testid="shipping-address"
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
                     <label className="block text-sm font-medium text-[#1A2F0D] mb-1">City *</label>
                     <input
@@ -390,10 +390,10 @@ const CartPage = () => {
         <div className="container-krishi py-8 md:py-12">
           <h1 className="heading-h2 mb-8">Your Cart ({cart.items.length} items)</h1>
 
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid gap-8 lg:grid-cols-3">
             <div className="lg:col-span-2 space-y-4">
               {cart.items.map((item, index) => (
-                <div key={`${item.product_id}-${item.size}`} className="card-krishi flex gap-4" data-testid={`cart-item-${index}`}>
+                <div key={`${item.product_id}-${item.size}`} className="card-krishi flex flex-col gap-4 sm:flex-row" data-testid={`cart-item-${index}`}>
                   <div className="w-24 h-24 md:w-32 md:h-32 rounded-lg overflow-hidden flex-shrink-0 bg-white">
                     <img
                       src={resolveMediaUrl(item.image, API) || 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=200'}
@@ -402,8 +402,8 @@ const CartPage = () => {
                     />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex justify-between items-start gap-2">
-                      <div>
+                    <div className="flex justify-between gap-2">
+                      <div className="min-w-0">
                         <Link to={`/products/${item.product_id}`} className="font-semibold text-[#1A2F0D] hover:text-[#2D5016]">
                           {item.name}
                         </Link>
@@ -418,8 +418,8 @@ const CartPage = () => {
                       </button>
                     </div>
 
-                    <div className="flex items-center justify-between mt-4">
-                      <div className="flex items-center border border-[#2D5016]/20 rounded-full">
+                    <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="flex items-center self-start rounded-full border border-[#2D5016]/20">
                         <button
                           onClick={() => updateQuantity(item.product_id, item.size, item.quantity - 1)}
                           className="w-8 h-8 flex items-center justify-center text-[#2D5016] hover:bg-[#2D5016]/5 rounded-l-full"
@@ -444,7 +444,7 @@ const CartPage = () => {
             </div>
 
             <div className="lg:col-span-1">
-              <div className="card-krishi sticky top-24">
+              <div className="card-krishi lg:sticky lg:top-24">
                 <h2 className="heading-h3 mb-6">Order Summary</h2>
 
                 <div className="space-y-3 border-t border-[#2D5016]/10 pt-4">

@@ -112,7 +112,7 @@ const BundleBuilderPage = () => {
         <div className="container-krishi">
           <div className="animate-pulse space-y-8">
             <div className="h-8 bg-[#EBE1C5] rounded w-1/3"></div>
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
               {[...Array(8)].map((_, i) => (
                 <div key={i} className="aspect-square bg-[#EBE1C5] rounded-2xl"></div>
               ))}
@@ -169,7 +169,7 @@ const BundleBuilderPage = () => {
 
         <div className="bg-white border-b border-[#2D5016]/10">
           <div className="container-krishi py-6">
-            <div className="flex justify-center items-center gap-4 md:gap-8">
+            <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8">
               {steps.map((s, idx) => (
                 <React.Fragment key={s.num}>
                   <button
@@ -198,7 +198,7 @@ const BundleBuilderPage = () => {
         </div>
 
         <div className="container-krishi py-8 md:py-12">
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid gap-8 lg:grid-cols-3">
             <div className="lg:col-span-2">
               {step === 1 && (
                 <div data-testid="step-1-content">
@@ -237,7 +237,7 @@ const BundleBuilderPage = () => {
                     <button
                       onClick={() => setStep(2)}
                       disabled={selectedOils.length < 2}
-                      className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="btn-primary w-full disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                       data-testid="next-step-1"
                     >
                       Continue <ArrowRight className="ml-2" size={18} />
@@ -279,11 +279,11 @@ const BundleBuilderPage = () => {
                       );
                     })}
                   </div>
-                  <div className="mt-8 flex justify-between">
-                    <button onClick={() => setStep(1)} className="btn-secondary" data-testid="back-step-2">
+                  <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-between">
+                    <button onClick={() => setStep(1)} className="btn-secondary w-full sm:w-auto" data-testid="back-step-2">
                       Back
                     </button>
-                    <button onClick={handleAddBundle} className="btn-accent" data-testid="add-bundle-btn">
+                    <button onClick={handleAddBundle} className="btn-accent w-full sm:w-auto" data-testid="add-bundle-btn">
                       Add Bundle to Cart
                     </button>
                   </div>
@@ -292,7 +292,7 @@ const BundleBuilderPage = () => {
             </div>
 
             <div className="lg:col-span-1">
-              <div className="card-krishi sticky top-24" data-testid="bundle-summary">
+              <div className="card-krishi lg:sticky lg:top-24" data-testid="bundle-summary">
                 <h3 className="heading-h3 mb-6">Your Bundle</h3>
 
                 {selectedOils.length === 0 && selectedAddons.length === 0 ? (

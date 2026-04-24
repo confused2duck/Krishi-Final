@@ -88,8 +88,8 @@ const ContactPage = () => {
           ) : (
             <img src={getImage('banner_image', contactImgUrl(contactImages[0].id))} alt="Contact" className="w-full h-full object-cover" />
           )}
-          <div className="absolute inset-0 bg-[#1A2F0D]/50 flex items-center justify-center">
-            <h1 className="text-4xl font-bold text-white" style={{ fontFamily: 'Playfair Display, serif' }}>{getText('banner_title', 'Get In Touch')}</h1>
+          <div className="absolute inset-0 flex items-center justify-center bg-[#1A2F0D]/50 px-4">
+            <h1 className="text-center text-3xl font-bold text-white md:text-4xl" style={{ fontFamily: 'Playfair Display, serif' }}>{getText('banner_title', 'Get In Touch')}</h1>
           </div>
         </section>
       )}
@@ -179,7 +179,7 @@ const ContactPage = () => {
             {/* Pincode Checker */}
             <div className="card-krishi bg-[#EBE1C5]/50">
               <h3 className="font-semibold text-[#1A2F0D] mb-4">Check Delivery Availability</h3>
-              <div className="flex gap-2">
+              <div className="flex flex-col gap-2 sm:flex-row">
                 <input
                   type="text"
                   placeholder="Enter your pincode"
@@ -189,7 +189,7 @@ const ContactPage = () => {
                   maxLength={6}
                   data-testid="pincode-input"
                 />
-                <button onClick={checkPincode} className="btn-primary" data-testid="check-delivery-btn">
+                <button onClick={checkPincode} className="btn-primary w-full sm:w-auto" data-testid="check-delivery-btn">
                   Check
                 </button>
               </div>

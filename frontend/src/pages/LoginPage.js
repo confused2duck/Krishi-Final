@@ -93,7 +93,7 @@ const LoginPage = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" className="rounded border-[#2D5016]/20" />
                 <span className="text-sm text-[#4A5D3F]">Remember me</span>

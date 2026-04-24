@@ -82,11 +82,11 @@ const Header = () => {
         </div>
       </div>
       <div className="container-krishi">
-        <div className="flex items-center justify-between h-16 md:h-20">
+        <div className="flex h-16 items-center justify-between gap-3 md:h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2" data-testid="logo-link">
+          <Link to="/" className="flex min-w-0 items-center gap-2" data-testid="logo-link">
             {logoUrl ? (
-              <img src={logoUrl} alt="Krishi" className="h-10 md:h-12 w-auto" />
+              <img src={logoUrl} alt="Krishi" className="h-9 w-auto sm:h-10 md:h-12" />
             ) : (
               <>
                 <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -141,11 +141,11 @@ const Header = () => {
           </nav>
 
           {/* Right Actions */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-1 sm:gap-2 md:gap-4">
             {/* Search */}
-            <button 
+            <button
               onClick={() => setSearchOpen(!searchOpen)} 
-              className="p-2 text-[#2D5016] hover:bg-[#2D5016]/10 rounded-full transition-colors"
+              className="rounded-full p-2 text-[#2D5016] transition-colors hover:bg-[#2D5016]/10"
               data-testid="search-toggle"
             >
               <Search size={20} />
@@ -184,13 +184,13 @@ const Header = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Link to="/login" className="p-2 text-[#2D5016] hover:bg-[#2D5016]/10 rounded-full transition-colors" data-testid="login-link">
+                <Link to="/login" className="rounded-full p-2 text-[#2D5016] transition-colors hover:bg-[#2D5016]/10" data-testid="login-link">
                 <User size={20} />
               </Link>
             )}
 
             {/* Cart */}
-            <Link to="/cart" className="relative p-2 text-[#2D5016] hover:bg-[#2D5016]/10 rounded-full transition-colors" data-testid="cart-link">
+            <Link to="/cart" className="relative rounded-full p-2 text-[#2D5016] transition-colors hover:bg-[#2D5016]/10" data-testid="cart-link">
               <ShoppingCart size={20} />
               {cartItemsCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-[#C8602B] text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-medium" data-testid="cart-count">
@@ -202,7 +202,7 @@ const Header = () => {
             {/* Mobile Menu Toggle */}
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 text-[#2D5016]"
+              className="rounded-full p-2 text-[#2D5016] lg:hidden"
               data-testid="mobile-menu-toggle"
             >
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -212,8 +212,8 @@ const Header = () => {
 
         {/* Search Bar */}
         {searchOpen && (
-          <div className="py-4 border-t border-[#2D5016]/10 animate-fade-in-up">
-            <form onSubmit={handleSearch} className="flex gap-2">
+          <div className="animate-fade-in-up border-t border-[#2D5016]/10 py-4">
+            <form onSubmit={handleSearch} className="flex flex-col gap-2 sm:flex-row">
               <input
                 type="text"
                 placeholder="Search products..."
@@ -223,7 +223,7 @@ const Header = () => {
                 data-testid="search-input"
                 autoFocus
               />
-              <button type="submit" className="btn-primary" data-testid="search-submit">
+              <button type="submit" className="btn-primary w-full sm:w-auto" data-testid="search-submit">
                 Search
               </button>
             </form>
@@ -232,9 +232,9 @@ const Header = () => {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-[#2D5016]/10 animate-fade-in-up">
+          <div className="animate-fade-in-up border-t border-[#2D5016]/10 py-4 lg:hidden">
             <nav className="flex flex-col space-y-4">
-              <div className="space-y-2">
+              <div className="max-h-[50vh] space-y-2 overflow-y-auto pr-1">
                 <p className="label-accent">Collections</p>
                 {collections.map((col) => (
                   <Link 

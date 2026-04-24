@@ -222,12 +222,12 @@ const ProductDetailPage = () => {
               />
             </div>
             {productImages.length > 1 && (
-              <div className="flex gap-3">
+              <div className="flex gap-3 overflow-x-auto pb-1">
                 {productImages.map((img, idx) => (
                   <button
                     key={idx}
                     onClick={() => setMainImage(idx)}
-                    className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors ${
+                    className={`h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-colors ${
                       mainImage === idx ? 'border-[#2D5016]' : 'border-transparent'
                     }`}
                   >
@@ -246,7 +246,7 @@ const ProductDetailPage = () => {
             </div>
 
             {/* Price */}
-            <div className="flex items-baseline gap-3" data-testid="product-price">
+            <div className="flex flex-wrap items-baseline gap-3" data-testid="product-price">
               <span className="text-3xl font-bold text-[#2D5016]">Rs{calculatePrice()}</span>
               {product.compare_price && (
                 <span className="text-xl text-[#4A5D3F] line-through">Rs{product.compare_price}</span>
@@ -300,8 +300,8 @@ const ProductDetailPage = () => {
             </div>
 
             {/* Quantity & Add to Cart */}
-            <div className="flex gap-4">
-              <div className="flex items-center border border-[#2D5016]/20 rounded-full">
+            <div className="flex flex-col gap-4 sm:flex-row">
+              <div className="flex items-center self-start rounded-full border border-[#2D5016]/20">
                 <button 
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   className="w-12 h-12 flex items-center justify-center text-[#2D5016] hover:bg-[#2D5016]/5 rounded-l-full"
@@ -318,7 +318,7 @@ const ProductDetailPage = () => {
                   <Plus size={18} />
                 </button>
               </div>
-              <button onClick={handleAddToCart} className="btn-primary flex-1" data-testid="add-to-cart-btn">
+              <button onClick={handleAddToCart} className="btn-primary w-full flex-1 sm:w-auto" data-testid="add-to-cart-btn">
                 <ShoppingCart className="mr-2" size={18} />
                 Add to Cart {oilOfferApplies && quantity > 0 ? `(Save ₹${quantity * 100})` : ''}
               </button>
@@ -334,7 +334,7 @@ const ProductDetailPage = () => {
                 <MapPin size={18} className="text-[#2D5016]" />
                 <span className="font-medium text-[#1A2F0D]">Check Delivery</span>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-col gap-2 sm:flex-row">
                 <input
                   type="text"
                   placeholder="Enter pincode"
@@ -344,7 +344,7 @@ const ProductDetailPage = () => {
                   maxLength={6}
                   data-testid="pincode-input"
                 />
-                <button onClick={checkPincode} className="btn-secondary" data-testid="check-pincode-btn">
+                <button onClick={checkPincode} className="btn-secondary w-full sm:w-auto" data-testid="check-pincode-btn">
                   Check
                 </button>
               </div>
@@ -416,25 +416,27 @@ const ProductDetailPage = () => {
           </TabsContent>
           
           <TabsContent value="comparison" className="pt-6">
-            <div className="card-krishi max-w-2xl">
-              <table className="w-full">
+            <div className="overflow-x-auto">
+              <div className="card-krishi max-w-2xl min-w-[320px]">
+                <table className="w-full">
                 <thead>
                   <tr className="border-b border-[#2D5016]/10">
-                    <th className="text-left py-3 font-medium text-[#1A2F0D]"></th>
-                    <th className="text-left py-3 font-medium text-[#2D5016]">Cold Pressed</th>
-                    <th className="text-left py-3 font-medium text-red-600">Refined</th>
+                    <th className="py-3 text-left text-sm font-medium text-[#1A2F0D] md:text-base"></th>
+                    <th className="py-3 text-left text-sm font-medium text-[#2D5016] md:text-base">Cold Pressed</th>
+                    <th className="py-3 text-left text-sm font-medium text-red-600 md:text-base">Refined</th>
                   </tr>
                 </thead>
                 <tbody>
                   {comparisonData.map((row, idx) => (
                     <tr key={idx} className="border-b border-[#2D5016]/10 last:border-0">
-                      <td className="py-3 text-[#1A2F0D] font-medium">{row.label}</td>
-                      <td className="py-3 text-[#2D5016]">Yes - {row.coldPressed}</td>
-                      <td className="py-3 text-red-600">No - {row.refined}</td>
+                      <td className="py-3 text-sm font-medium text-[#1A2F0D] md:text-base">{row.label}</td>
+                      <td className="py-3 text-sm text-[#2D5016] md:text-base">Yes - {row.coldPressed}</td>
+                      <td className="py-3 text-sm text-red-600 md:text-base">No - {row.refined}</td>
                     </tr>
                   ))}
                 </tbody>
-              </table>
+                </table>
+              </div>
             </div>
           </TabsContent>
           
@@ -518,11 +520,11 @@ const ProductDetailPage = () => {
         data-testid="mobile-sticky-bar"
       >
         <div className="flex items-center justify-between gap-4">
-          <div>
-            <p className="font-semibold text-[#1A2F0D]">{product.name}</p>
+          <div className="min-w-0">
+            <p className="truncate font-semibold text-[#1A2F0D]">{product.name}</p>
             <p className="text-lg font-bold text-[#2D5016]">Rs{calculatePrice()}</p>
           </div>
-          <button onClick={handleAddToCart} className="btn-primary">
+          <button onClick={handleAddToCart} className="btn-primary shrink-0">
             Add to Cart
           </button>
         </div>

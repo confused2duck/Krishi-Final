@@ -130,7 +130,7 @@ const AccountPage = () => {
                             {order.created_at ? formatDate(order.created_at) : 'Recent'}
                           </p>
                         </div>
-                        <div className="flex items-center gap-4">
+                      <div className="flex flex-wrap items-center gap-4">
                           <span className={`px-3 py-1 rounded-full text-sm font-medium ${
                             order.status === 'delivered' ? 'bg-[#2D5016]/10 text-[#2D5016]' :
                             order.status === 'pending' ? 'bg-[#C8602B]/10 text-[#C8602B]' :
@@ -142,9 +142,9 @@ const AccountPage = () => {
                         </div>
                       </div>
 
-                      <div className="flex flex-wrap gap-3 mb-4">
+                      <div className="mb-4 flex flex-wrap gap-3">
                         {order.items?.map((item, itemIdx) => (
-                          <div key={itemIdx} className="flex items-center gap-2 bg-[#EBE1C5]/50 rounded-lg p-2">
+                          <div key={itemIdx} className="flex min-w-0 items-center gap-2 rounded-lg bg-[#EBE1C5]/50 p-2">
                             <img
                               src={resolveMediaUrl(item.image, API) || 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=100'}
                               alt={item.name}

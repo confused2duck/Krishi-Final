@@ -43,12 +43,12 @@ const AboutPage = () => {
     />
     <div className="bg-[#F5EDD6]" data-testid="about-page">
       {/* Hero */}
-      <section className="relative py-24 md:py-32">
+      <section className="relative py-16 md:py-32">
         <div className="container-krishi">
           <div className="max-w-3xl mx-auto text-center">
             <span className="label-accent">Our Story</span>
             <h1 className="heading-h1 mt-4 mb-6">{getText('hero_title', 'Bringing Back Traditional Goodness')}</h1>
-            <p className="text-lg text-[#4A5D3F] leading-relaxed">
+            <p className="text-base leading-relaxed text-[#4A5D3F] sm:text-lg">
               {getText('hero_subtitle', "Krishi was born from a simple belief: the food our grandparents ate was healthier, purer, and more nutritious. We're on a mission to bring back those traditional practices to modern kitchens.")}
             </p>
           </div>
@@ -116,7 +116,7 @@ const AboutPage = () => {
           
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-24 h-24 bg-[#2D5016] rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-[#2D5016]">
                 <span className="text-4xl text-white font-bold" style={{ fontFamily: 'Playfair Display, serif' }}>1</span>
               </div>
               <h3 className="heading-h3 mb-4">Selection</h3>
@@ -126,7 +126,7 @@ const AboutPage = () => {
               </p>
             </div>
             <div className="text-center">
-              <div className="w-24 h-24 bg-[#C8602B] rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-[#C8602B]">
                 <span className="text-4xl text-white font-bold" style={{ fontFamily: 'Playfair Display, serif' }}>2</span>
               </div>
               <h3 className="heading-h3 mb-4">Cold Pressing</h3>
@@ -136,8 +136,8 @@ const AboutPage = () => {
               </p>
             </div>
             <div className="text-center">
-              <div className="w-24 h-24 bg-[#2D5016] rounded-full flex items-center justify-center mx-auto mb-6">
-                at room temperature - never exceeding 50C.
+              <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-[#2D5016]">
+                <span className="text-4xl font-bold text-white" style={{ fontFamily: 'Playfair Display, serif' }}>3</span>
               </div>
               <h3 className="heading-h3 mb-4">Pure & Unrefined</h3>
               <p className="text-[#4A5D3F]">
@@ -159,7 +159,7 @@ const AboutPage = () => {
             </h2>
           </div>
           
-          <div className="grid md:grid-cols-4 gap-6">
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
             {values.map((value, idx) => (
               <div key={idx} className="bg-white/10 backdrop-blur rounded-2xl p-6 text-center">
                 <value.icon size={40} className="mx-auto mb-4 text-[#C8602B]" />

@@ -110,7 +110,7 @@ const BlogPage = () => {
             <header className="mb-8">
               <span className="label-accent">{selectedPost.category}</span>
               <h1 className="heading-h1 text-3xl md:text-4xl mt-2 mb-4">{selectedPost.title}</h1>
-              <div className="flex items-center gap-4 text-sm text-[#4A5D3F]">
+              <div className="flex flex-wrap items-center gap-4 text-sm text-[#4A5D3F]">
                 <span className="flex items-center gap-2">
                   <User size={16} /> {selectedPost.author}
                 </span>
@@ -159,7 +159,7 @@ const BlogPage = () => {
             {/* Related Posts */}
             <div className="mt-16 pt-8 border-t border-[#2D5016]/10">
               <h3 className="heading-h3 mb-6">More Articles</h3>
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid gap-6 md:grid-cols-2">
                 {posts.filter(p => p.slug !== slug).slice(0, 2).map((post) => (
                   <Link key={post.slug} to={`/blogs/news/${post.slug}`} className="group">
                     <div className="aspect-video rounded-xl overflow-hidden mb-3">
@@ -231,8 +231,8 @@ const BlogPage = () => {
             ) : (
               <img src={blogImgUrl(blogImages[0].id)} alt="Blog" className="w-full h-full object-cover" />
             )}
-            <div className="absolute inset-0 bg-[#1A2F0D]/50 flex items-center justify-center">
-              <h1 className="text-3xl md:text-4xl font-bold text-white" style={{ fontFamily: 'Playfair Display, serif' }}>Latest From The Blog</h1>
+            <div className="absolute inset-0 flex items-center justify-center bg-[#1A2F0D]/50 px-4">
+              <h1 className="text-center text-3xl font-bold text-white md:text-4xl" style={{ fontFamily: 'Playfair Display, serif' }}>Latest From The Blog</h1>
             </div>
           </div>
         )}

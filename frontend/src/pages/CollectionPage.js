@@ -91,8 +91,8 @@ const CollectionPage = () => {
     const remaining = Math.max(threshold - cartTotal, 0);
 
     return (
-      <div className="bg-[#2D5016] text-[#F5EDD6] py-3 px-4 rounded-xl mb-6" data-testid="free-shipping-bar">
-        <div className="flex items-center justify-between mb-2 text-sm">
+      <div className="mb-6 rounded-xl bg-[#2D5016] px-4 py-3 text-[#F5EDD6]" data-testid="free-shipping-bar">
+        <div className="mb-2 flex flex-col gap-1 text-sm sm:flex-row sm:items-center sm:justify-between">
           <span>
             {remaining > 0 ? `Add ₹${remaining} more to unlock free shipping within 10 km.` : "Free shipping unlocked within 10 km."}
           </span>
@@ -229,7 +229,7 @@ const CollectionPage = () => {
       <div className="container-krishi py-8 md:py-12">
         <FreeShippingBar />
 
-        <div className="flex gap-8">
+        <div className="flex flex-col gap-8 lg:flex-row">
           {/* Desktop Sidebar */}
           <aside className="hidden lg:block w-64 flex-shrink-0">
             <FilterSidebar />
@@ -238,11 +238,11 @@ const CollectionPage = () => {
           {/* Mobile Filter Button */}
           <Sheet open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>
             <SheetTrigger asChild>
-              <button className="lg:hidden fixed bottom-20 left-4 z-40 btn-primary flex items-center gap-2" data-testid="mobile-filter-btn">
+              <button className="btn-primary fixed bottom-24 left-4 z-40 flex items-center gap-2 lg:hidden" data-testid="mobile-filter-btn">
                 <SlidersHorizontal size={18} /> Filters
               </button>
             </SheetTrigger>
-            <SheetContent side="left" className="bg-[#F5EDD6] w-80">
+            <SheetContent side="left" className="w-[85vw] max-w-sm bg-[#F5EDD6]">
               <SheetHeader>
                 <SheetTitle className="text-[#2D5016]" style={{ fontFamily: 'Playfair Display, serif' }}>Filters</SheetTitle>
               </SheetHeader>
@@ -254,7 +254,7 @@ const CollectionPage = () => {
 
           {/* Products Grid */}
           <div className="flex-1">
-            <div className="flex justify-between items-center mb-6">
+            <div className="mb-6 flex items-center justify-between gap-3">
               <p className="text-[#4A5D3F]">{products.length} products</p>
             </div>
 
@@ -299,9 +299,9 @@ const CollectionPage = () => {
                           Only {product.stock} left
                         </span>
                       )}
-                      <button 
+                      <button
                         onClick={(e) => handleAddToCart(product, e)}
-                        className="absolute bottom-4 right-4 w-10 h-10 bg-[#2D5016] text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-[#1F3A0F]"
+                        className="absolute bottom-4 right-4 flex h-10 w-10 items-center justify-center rounded-full bg-[#2D5016] text-white opacity-100 transition-opacity hover:bg-[#1F3A0F] md:opacity-0 md:group-hover:opacity-100"
                         data-testid={`quick-add-${product.slug}`}
                       >
                         <ShoppingCart size={18} />

@@ -106,8 +106,8 @@ const OilEducationPage = () => {
           ) : (
             <img src={oilImgUrl(bannerImage.id)} alt="Oil Education" className="w-full h-full object-cover" />
           )}
-          <div className="absolute inset-0 bg-[#1A2F0D]/60 flex items-center justify-center">
-            <h1 className="text-4xl font-bold text-white text-center px-4" style={{ fontFamily: 'Playfair Display, serif' }}>The Science of Cold Pressing</h1>
+          <div className="absolute inset-0 flex items-center justify-center bg-[#1A2F0D]/60">
+            <h1 className="px-4 text-center text-3xl font-bold text-white md:text-4xl" style={{ fontFamily: 'Playfair Display, serif' }}>The Science of Cold Pressing</h1>
           </div>
         </section>
       )}
@@ -116,8 +116,9 @@ const OilEducationPage = () => {
       <section className="relative py-20 md:py-28 bg-[#2D5016]">
         <div className="container-krishi text-center">
           <span className="text-xs uppercase tracking-[0.2em] font-medium text-[#C8602B]">Learn</span>
-          <h1 className="text-4xl md:text-5xl font-bold text-white mt-4 mb-6" style={{ fontFamily: 'Playfair Display, serif' }}>
-            The Complete Guide to<br />Cold Pressed Oils
+          <h1 className="mt-4 mb-6 text-4xl font-bold text-white md:text-5xl" style={{ fontFamily: 'Playfair Display, serif' }}>
+            <span className="block">The Complete Guide to</span>
+            <span className="block">Cold Pressed Oils</span>
           </h1>
           <p className="text-[#F5EDD6]/80 max-w-2xl mx-auto">
             Everything you need to know about traditional oils – types, benefits, 
@@ -170,7 +171,7 @@ const OilEducationPage = () => {
           </div>
           
           <div className="overflow-x-auto">
-            <table className="w-full max-w-4xl mx-auto">
+            <table className="mx-auto w-full min-w-[720px] max-w-4xl">
               <thead>
                 <tr className="border-b-2 border-[#2D5016]/20">
                   <th className="text-left py-4 px-4 font-semibold text-[#1A2F0D]">Aspect</th>
@@ -208,7 +209,7 @@ const OilEducationPage = () => {
             <h2 className="heading-h2 mt-2">Popular Cold Pressed Oils</h2>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid gap-6 md:grid-cols-3">
             {oilsWithImages.map((oil, idx) => (
               <div key={idx} className="card-krishi">
                 <div className="aspect-video rounded-xl overflow-hidden mb-4">

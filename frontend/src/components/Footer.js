@@ -23,8 +23,8 @@ const Footer = () => {
 
   return (
     <footer className="bg-[#2D5016] text-[#F5EDD6]" data-testid="main-footer">
-      <div className="container-krishi py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+      <div className="container-krishi py-12 md:py-16">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4 lg:gap-12">
           {/* Brand */}
           <div className="space-y-4">
             <Link to="/" data-testid="footer-logo-link">
@@ -115,7 +115,7 @@ const Footer = () => {
               </li>
               <li className="flex items-start space-x-3">
                 <MapPin size={18} className="mt-0.5 text-[#C8602B]" />
-                <p className="text-[#F5EDD6]/80 text-sm">
+                <p className="break-words text-[#F5EDD6]/80 text-sm">
                   Krishi cold pressed 105, 2nd Main Rd, RHCS Layout,<br />
                   Annapoorneshwari Nagar, Nagarabhavi, Bangalore - 560091<br />
                   <span className="block mt-2">

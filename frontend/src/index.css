@@ -54,6 +54,25 @@
   body {
     @apply bg-[#F5EDD6] text-[#1A2F0D] antialiased;
     font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
+
+  main {
+    overflow-x: clip;
+  }
+
+  img,
+  video,
+  canvas,
+  svg {
+    max-width: 100%;
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    min-width: 0;
   }
   
   h1, h2, h3, h4, h5, h6 {
@@ -64,15 +83,15 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-[#2D5016] text-[#F5EDD6] hover:bg-[#1F3A0F] rounded-full px-8 py-3 font-medium transition-all duration-300 inline-flex items-center justify-center;
+    @apply bg-[#2D5016] text-[#F5EDD6] hover:bg-[#1F3A0F] rounded-full px-8 py-3 font-medium text-center transition-all duration-300 inline-flex items-center justify-center;
   }
   
   .btn-secondary {
-    @apply bg-transparent border-2 border-[#2D5016] text-[#2D5016] hover:bg-[#2D5016] hover:text-[#F5EDD6] rounded-full px-8 py-3 font-medium transition-all duration-300 inline-flex items-center justify-center;
+    @apply bg-transparent border-2 border-[#2D5016] text-[#2D5016] hover:bg-[#2D5016] hover:text-[#F5EDD6] rounded-full px-8 py-3 font-medium text-center transition-all duration-300 inline-flex items-center justify-center;
   }
   
   .btn-accent {
-    @apply bg-[#C8602B] text-white hover:bg-[#A94E21] rounded-full px-8 py-3 font-medium shadow-[0_4px_14px_0_rgba(200,96,43,0.39)] transition-all duration-300 inline-flex items-center justify-center;
+    @apply bg-[#C8602B] text-white hover:bg-[#A94E21] rounded-full px-8 py-3 font-medium text-center shadow-[0_4px_14px_0_rgba(200,96,43,0.39)] transition-all duration-300 inline-flex items-center justify-center;
   }
   
   .card-krishi {

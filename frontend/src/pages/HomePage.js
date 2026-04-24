@@ -270,7 +270,7 @@ const HomePage = () => {
       {/* Bestsellers Carousel */}
       <section className="section-padding bg-white" data-testid="bestsellers-section">
         <div className="container-krishi">
-          <div className="flex justify-between items-end mb-12">
+          <div className="mb-8 flex flex-col gap-4 md:mb-12 md:flex-row md:items-end md:justify-between">
             <div>
               <span className="label-accent">Top Picks</span>
               <h2 className="heading-h2 mt-2">Bestsellers</h2>
@@ -328,7 +328,7 @@ const HomePage = () => {
           </div>
           
           <div className="max-w-3xl mx-auto">
-            <div className="flex items-center justify-center gap-4 mb-8">
+            <div className="mb-8 flex flex-wrap items-center justify-center gap-4 text-center">
               <span className={`font-medium ${showColdPressed ? 'text-[#2D5016]' : 'text-[#4A5D3F]'}`}>Cold Pressed</span>
               <Switch 
                 checked={!showColdPressed}
@@ -338,21 +338,23 @@ const HomePage = () => {
               <span className={`font-medium ${!showColdPressed ? 'text-[#2D5016]' : 'text-[#4A5D3F]'}`}>Refined</span>
             </div>
             
-            <div className="card-krishi">
-              <table className="w-full">
-                <tbody>
+            <div className="overflow-x-auto">
+              <div className="card-krishi min-w-[320px]">
+                <table className="w-full">
+                  <tbody>
                   {Object.entries(showColdPressed ? comparisonData.coldPressed : comparisonData.refined).map(([key, value]) => (
                     <tr key={key} className="border-b border-[#2D5016]/10 last:border-0">
-                      <td className="py-4 pr-4 font-medium text-[#2D5016] capitalize w-1/3">{key}</td>
-                      <td className="py-4 text-[#4A5D3F]">
+                      <td className="w-1/3 py-4 pr-3 align-top text-sm font-medium capitalize text-[#2D5016] md:pr-4 md:text-base">{key}</td>
+                      <td className="py-4 text-sm text-[#4A5D3F] md:text-base">
                         <span className={`inline-flex items-center gap-2 ${showColdPressed ? 'text-[#2D5016]' : 'text-red-600'}`}>
                           {showColdPressed ? '✓' : '✗'} {value}
                         </span>
                       </td>
                     </tr>
                   ))}
-                </tbody>
-              </table>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
@@ -435,7 +437,7 @@ const HomePage = () => {
       {/* Blog Teaser */}
       <section className="section-padding" data-testid="blog-section">
         <div className="container-krishi">
-          <div className="flex justify-between items-end mb-12">
+          <div className="mb-8 flex flex-col gap-4 md:mb-12 md:flex-row md:items-end md:justify-between">
             <div>
               <span className="label-accent">From The Blog</span>
               <h2 className="heading-h2 mt-2">Learn & Discover</h2>
