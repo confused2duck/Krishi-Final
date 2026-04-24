@@ -48,6 +48,8 @@ JWT_ALGORITHM = "HS256"
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
+IS_VERCEL_RUNTIME = bool(os.environ.get("VERCEL"))
+
 # Password hashing
 def hash_password(password: str) -> str:
     salt = bcrypt.gensalt()
@@ -2343,17 +2345,21 @@ async def lifespan(app: FastAPI):
         await db.subscriptions.create_index("user_id")
 
         await seed_admin()
-        await sync_default_logo()
-        await seed_products()
-        await sync_seeded_products()
-        await sync_curated_product_images()
-        await seed_collections()
-        await sync_curated_collection_metadata()
-        await prune_removed_collections()
-        await seed_blog_posts()
-        await seed_cms_pages()
-        await write_test_credentials()
-        logger.info("Database seeded successfully")
+
+        if IS_VERCEL_RUNTIME:
+            logger.info("Skipping heavy startup maintenance in Vercel runtime")
+        else:
+            await sync_default_logo()
+            await seed_products()
+            await sync_seeded_products()
+            await sync_curated_product_images()
+            await seed_collections()
+            await sync_curated_collection_metadata()
+            await prune_removed_collections()
+            await seed_blog_posts()
+            await seed_cms_pages()
+            await write_test_credentials()
+            logger.info("Database seeded successfully")
     except Exception as e:
         logger.error(f"Startup error (non-fatal): {e}")
     yield
