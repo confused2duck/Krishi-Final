@@ -76,17 +76,17 @@ const Header = () => {
     <header className="sticky-header" data-testid="main-header">
       <div className="border-b border-[#2D5016]/10 bg-[#2D5016]">
         <div className="container-krishi">
-          <div className="flex min-h-[34px] items-center justify-center py-1 text-center text-[0.75rem] font-medium tracking-[0.01em] text-[#F5EDD6] sm:text-[0.82rem]">
+          <div className="flex min-h-[34px] items-center justify-center py-1 text-center text-[0.7rem] font-medium tracking-[0.01em] text-[#F5EDD6] sm:text-[0.82rem]">
             {FREE_SHIPPING_MESSAGE}
           </div>
         </div>
       </div>
       <div className="container-krishi">
-        <div className="flex h-16 items-center justify-between gap-3 md:h-20">
+        <div className="flex h-16 items-center justify-between gap-2 sm:gap-3 md:h-20">
           {/* Logo */}
-          <Link to="/" className="flex min-w-0 items-center gap-2" data-testid="logo-link">
+          <Link to="/" className="flex min-w-0 max-w-[8.5rem] items-center gap-2 sm:max-w-none" data-testid="logo-link">
             {logoUrl ? (
-              <img src={logoUrl} alt="Krishi" className="h-9 w-auto sm:h-10 md:h-12" />
+              <img src={logoUrl} alt="Krishi" className="h-7 w-auto sm:h-10 md:h-12" />
             ) : (
               <>
                 <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -141,14 +141,14 @@ const Header = () => {
           </nav>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-1 sm:gap-2 md:gap-4">
+          <div className="flex shrink-0 items-center gap-0.5 sm:gap-2 md:gap-4">
             {/* Search */}
             <button
               onClick={() => setSearchOpen(!searchOpen)} 
               className="rounded-full p-2 text-[#2D5016] transition-colors hover:bg-[#2D5016]/10"
               data-testid="search-toggle"
             >
-              <Search size={20} />
+              <Search size={18} className="sm:h-5 sm:w-5" />
             </button>
 
             {/* WhatsApp */}
@@ -185,13 +185,13 @@ const Header = () => {
               </DropdownMenu>
             ) : (
                 <Link to="/login" className="rounded-full p-2 text-[#2D5016] transition-colors hover:bg-[#2D5016]/10" data-testid="login-link">
-                <User size={20} />
+                <User size={18} className="sm:h-5 sm:w-5" />
               </Link>
             )}
 
             {/* Cart */}
             <Link to="/cart" className="relative rounded-full p-2 text-[#2D5016] transition-colors hover:bg-[#2D5016]/10" data-testid="cart-link">
-              <ShoppingCart size={20} />
+              <ShoppingCart size={18} className="sm:h-5 sm:w-5" />
               {cartItemsCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-[#C8602B] text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-medium" data-testid="cart-count">
                   {cartItemsCount}
@@ -205,7 +205,7 @@ const Header = () => {
               className="rounded-full p-2 text-[#2D5016] lg:hidden"
               data-testid="mobile-menu-toggle"
             >
-              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              {mobileMenuOpen ? <X size={22} className="sm:h-6 sm:w-6" /> : <Menu size={22} className="sm:h-6 sm:w-6" />}
             </button>
           </div>
         </div>
