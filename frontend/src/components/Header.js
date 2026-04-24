@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, ShoppingCart, User, Search, Phone } from 'lucide-react';
+import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { FREE_SHIPPING_MESSAGE } from '../lib/utils';
@@ -11,25 +12,50 @@ import {
   DropdownMenuTrigger,
 } from '../components/ui/dropdown-menu';
 
+const API = process.env.REACT_APP_BACKEND_URL || "";
+const HIDDEN_COLLECTION_SLUGS = new Set(['unpolished-pulses', 'shikakai', 'wheat', 'frontpage']);
+const FALLBACK_COLLECTIONS = [
+  { name: 'Cold-Pressed Oil', slug: 'cold-pressed-oils' },
+  { name: 'Ghee & Honey', slug: 'ghee-honey' },
+  { name: 'Jaggery & Salt', slug: 'jaggery-rocksalt' },
+  { name: 'Rices', slug: 'traditional-rices' },
+  { name: 'Unpolished Millets', slug: 'unpolished-millets' },
+  { name: 'Spices & Pulses', slug: 'spices' },
+  { name: 'Chikkis', slug: 'chikkis' },
+  { name: 'Others', slug: 'others' },
+];
+
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [collections, setCollections] = useState(FALLBACK_COLLECTIONS);
   const { user, logout } = useAuth();
   const { cartItemsCount } = useCart();
   const navigate = useNavigate();
   const logoUrl = '/images/branding/krishi-logo.png';
 
-  const collections = [
-    { name: 'Cold-Pressed Oil', slug: 'cold-pressed-oils' },
-    { name: 'Ghee & Honey', slug: 'ghee-honey' },
-    { name: 'Jaggery & Salt', slug: 'jaggery-rocksalt' },
-    { name: 'Rices', slug: 'traditional-rices' },
-    { name: 'Unpolished Millets', slug: 'unpolished-millets' },
-    { name: 'Spices & Pulses', slug: 'spices' },
-    { name: 'Chikkis', slug: 'chikkis' },
-    { name: 'Others', slug: 'others' },
-  ];
+  useEffect(() => {
+    const fetchCollections = async () => {
+      try {
+        const response = await axios.get(`${API}/api/collections`);
+        const backendCollections = (response.data || [])
+          .filter((collection) => !HIDDEN_COLLECTION_SLUGS.has(collection.slug))
+          .map((collection) => ({
+            name: collection.name,
+            slug: collection.slug,
+          }));
+
+        if (backendCollections.length > 0) {
+          setCollections(backendCollections);
+        }
+      } catch (error) {
+        console.error('Failed to fetch header collections:', error);
+      }
+    };
+
+    fetchCollections();
+  }, []);
 
   const handleSearch = (e) => {
     e.preventDefault();

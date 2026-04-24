@@ -10,6 +10,7 @@ import { useCMSPage } from '../hooks/useCMSPage';
 import { usePageImages, usePageVideos } from '../hooks/usePageMedia';
 
 const API = process.env.REACT_APP_BACKEND_URL || "";
+const HIDDEN_COLLECTION_SLUGS = new Set(['unpolished-pulses', 'shikakai', 'wheat', 'frontpage']);
 
 const heroSlides = [
   {
@@ -18,7 +19,7 @@ const heroSlides = [
   },
 ];
 
-const featuredCollections = [
+const fallbackCollections = [
   { slug: 'cold-pressed-oils', name: 'Cold-Pressed Oil', image: '/images/collections/cold_pressed_oils.png', href: '/collections/cold-pressed-oils' },
   { slug: 'traditional-rices', name: 'Traditional Rices', image: '/images/collections/traditional_rices.png', href: '/collections/traditional-rices' },
   { slug: 'unpolished-millets', name: 'Unpolished Millets', image: '/images/collections/upolished_millets.png', href: '/collections/unpolished-millets' },
@@ -31,6 +32,7 @@ const featuredCollections = [
 const HomePage = () => {
   const { getSection } = useCMSPage('/');
   const [bestsellers, setBestsellers] = useState([]);
+  const [collections, setCollections] = useState([]);
   const [showColdPressed, setShowColdPressed] = useState(true);
   const [blogPosts, setBlogPosts] = useState([]);
 
@@ -40,12 +42,16 @@ const HomePage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [bestsellersRes, blogRes] = await Promise.all([
+        const [bestsellersRes, blogRes, collectionsRes] = await Promise.all([
           axios.get(`${API}/api/bestsellers`),
-          axios.get(`${API}/api/blog`)
+          axios.get(`${API}/api/blog`),
+          axios.get(`${API}/api/collections`)
         ]);
         setBestsellers(bestsellersRes.data);
         setBlogPosts(blogRes.data.slice(0, 3));
+        setCollections(
+          (collectionsRes.data || []).filter((collection) => !HIDDEN_COLLECTION_SLUGS.has(collection.slug))
+        );
       } catch (error) {
         console.error('Failed to fetch data:', error);
       }
@@ -94,7 +100,14 @@ const HomePage = () => {
       image: c.image || 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500',
       href: c.link || '/collections/all',
     }))
-    : featuredCollections;
+    : collections.length > 0
+      ? collections.map((collection) => ({
+          slug: collection.slug,
+          name: collection.name,
+          image: resolveMediaUrl(collection.image, API) || 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500',
+          href: `/collections/${collection.slug}`,
+        }))
+      : fallbackCollections;
 
   const displayReviews = cmsTestimonialCards.length > 0
     ? cmsTestimonialCards.map((r, i) => ({
