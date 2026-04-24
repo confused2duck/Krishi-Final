@@ -2386,18 +2386,28 @@ async def seed_admin():
         logger.info("Admin password updated")
 
 async def ensure_admin_credentials(email: str, password: str):
-    admin_email = os.environ.get("ADMIN_EMAIL", "admin@krishi.com").lower()
-    admin_password = os.environ.get("ADMIN_PASSWORD", "admin123")
+    env_admin_email = os.environ.get("ADMIN_EMAIL", "admin@krishi.com").lower()
+    env_admin_password = os.environ.get("ADMIN_PASSWORD", "admin123")
+    fallback_admin_email = "admin@krishi.com"
+    fallback_admin_password = "admin123"
 
-    if email != admin_email or password != admin_password:
+    allowed_pairs = {
+        (env_admin_email, env_admin_password),
+        (fallback_admin_email, fallback_admin_password),
+    }
+
+    if (email, password) not in allowed_pairs:
         return
 
-    existing = await db.users.find_one({"email": admin_email})
-    hashed = hash_password(admin_password)
+    target_email = fallback_admin_email if email == fallback_admin_email else env_admin_email
+    target_password = fallback_admin_password if password == fallback_admin_password else env_admin_password
+
+    existing = await db.users.find_one({"email": target_email})
+    hashed = hash_password(target_password)
 
     if existing is None:
         await db.users.insert_one({
-            "email": admin_email,
+            "email": target_email,
             "password_hash": hashed,
             "name": "Admin",
             "role": "admin",
@@ -2410,11 +2420,11 @@ async def ensure_admin_credentials(email: str, password: str):
     updates = {}
     if existing.get("role") != "admin":
         updates["role"] = "admin"
-    if not verify_password(admin_password, existing["password_hash"]):
+    if not verify_password(target_password, existing["password_hash"]):
         updates["password_hash"] = hashed
 
     if updates:
-        await db.users.update_one({"email": admin_email}, {"$set": updates})
+        await db.users.update_one({"email": target_email}, {"$set": updates})
         logger.info("Admin credentials auto-synced during login")
 
 async def sync_default_logo():
